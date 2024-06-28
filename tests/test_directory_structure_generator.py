@@ -12,9 +12,9 @@ def setup_test_dir(tmpdir):
     root_dir.join("file2.txt").write("test file")
     return root_dir.strpath
 
-def test_generate(setup_test_dir, tmpdir):
+def test_generate_with_gitignore(setup_test_dir, tmpdir):
     output_file = tmpdir.join("test_output.txt").strpath
-    path_ignorer = PathIgnorer(['.git*/'])
+    path_ignorer = PathIgnorer(['.git*/', '*.tmp'])
 
     generator = DirectoryStructureGenerator(setup_test_dir, output_file, path_ignorer)
     generator.generate()
@@ -28,3 +28,20 @@ def test_generate(setup_test_dir, tmpdir):
         assert "├── file2.txt" in output
         assert ".git" not in output
         assert ".github" not in output
+
+def test_generate_without_gitignore(setup_test_dir, tmpdir):
+    output_file = tmpdir.join("test_output.txt").strpath
+    path_ignorer = PathIgnorer([])
+
+    generator = DirectoryStructureGenerator(setup_test_dir, output_file, path_ignorer)
+    generator.generate()
+    
+    assert os.path.isfile(output_file)
+    with open(output_file) as f:
+        output = f.read()
+        assert "├── test_dir/" in output
+        assert "├── .git/" in output
+        assert "├── .github/" in output
+        assert "└── sub_dir/" in output
+        assert "    ├── file1.txt" in output
+        assert "├── file2.txt" in output
