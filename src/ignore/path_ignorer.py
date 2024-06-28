@@ -4,8 +4,7 @@ from utils.logger import logger
 class PathIgnorer:
     def __init__(self, ignore_list):
         self.ignore_patterns = [self._convert_pattern(pattern) for pattern in ignore_list]
-        logger.info(f"Path ignorer initialized with ignore patterns: {self.ignore_patterns}")
-
+        
     def _convert_pattern(self, pattern):
         pattern = pattern.strip()
         if pattern.endswith('/'):
