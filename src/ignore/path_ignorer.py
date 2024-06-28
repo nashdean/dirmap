@@ -1,12 +1,21 @@
+import re
 from utils.logger import logger
 
 class PathIgnorer:
     def __init__(self, ignore_list):
-        self.ignore_list = ignore_list
-        logger.info(f"Path ignorer initialized with ignore list: {ignore_list}")
+        self.ignore_patterns = [self._convert_pattern(pattern) for pattern in ignore_list]
+        logger.info(f"Path ignorer initialized with ignore patterns: {self.ignore_patterns}")
+
+    def _convert_pattern(self, pattern):
+        pattern = pattern.strip()
+        if pattern.endswith('/'):
+            pattern = pattern[:-1] + '(/.*)?'
+        pattern = pattern.replace('.', r'\.').replace('*', r'.*')
+        return pattern
 
     def should_ignore(self, path):
-        for ignore in self.ignore_list:
-            if ignore in path:
+        for pattern in self.ignore_patterns:
+            if re.search(pattern, path):
+                logger.info(f"Ignoring path: {path}")
                 return True
         return False

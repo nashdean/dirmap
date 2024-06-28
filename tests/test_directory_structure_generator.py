@@ -6,17 +6,25 @@ from src.ignore.path_ignorer import PathIgnorer
 @pytest.fixture
 def setup_test_dir(tmpdir):
     root_dir = tmpdir.mkdir("test_dir")
-    test_file = root_dir.join("file1.txt")
-    test_file.write("test file")
+    root_dir.mkdir(".git").join("config").write("dummy config")
+    root_dir.mkdir(".github").join("workflow").write("dummy workflow")
+    root_dir.mkdir("sub_dir").join("file1.txt").write("test file")
+    root_dir.join("file2.txt").write("test file")
     return root_dir.strpath
 
 def test_generate(setup_test_dir, tmpdir):
     output_file = tmpdir.join("test_output.txt").strpath
-    path_ignorer = PathIgnorer([])
-    
+    path_ignorer = PathIgnorer(['.git*/'])
+
     generator = DirectoryStructureGenerator(setup_test_dir, output_file, path_ignorer)
     generator.generate()
     
     assert os.path.isfile(output_file)
     with open(output_file) as f:
-        assert "├── test_dir/" in f.read()
+        output = f.read()
+        assert "├── test_dir/" in output
+        assert "└── sub_dir/" in output
+        assert "    ├── file1.txt" in output
+        assert "├── file2.txt" in output
+        assert ".git" not in output
+        assert ".github" not in output

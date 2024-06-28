@@ -25,8 +25,15 @@ class DirectoryStructureGenerator:
                     sub_indent = '│   ' * (level + 1)
                     f.write('{}├── {}/\n'.format(indent, os.path.basename(dirpath)))
 
+                    # Copy dirnames list to avoid modifying it while iterating
+                    for dirname in list(dirnames):
+                        full_dirname = os.path.join(dirpath, dirname)
+                        if self.ignorer.should_ignore(full_dirname):
+                            dirnames.remove(dirname)
+
                     for i, filename in enumerate(filenames):
-                        if self.ignorer.should_ignore(os.path.join(dirpath, filename)):
+                        full_filename = os.path.join(dirpath, filename)
+                        if self.ignorer.should_ignore(full_filename):
                             continue
 
                         file_indent = sub_indent if i < len(filenames) - 1 else sub_indent[:-4] + '    '

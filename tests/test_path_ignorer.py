@@ -2,7 +2,20 @@ import pytest
 from src.ignore.path_ignorer import PathIgnorer
 
 def test_should_ignore():
-    ignorer = PathIgnorer(['ignore_this'])
+    ignorer = PathIgnorer(['.git/', '.github/', '.*cache'])
     
-    assert ignorer.should_ignore('ignore_this/path')
-    assert not ignorer.should_ignore('do_not_ignore_this/path')
+    assert ignorer.should_ignore('some/path/.git')
+    assert ignorer.should_ignore('some/path/.github')
+    assert ignorer.should_ignore('some/path/.cache')
+    assert not ignorer.should_ignore('some/path/dir')
+    assert not ignorer.should_ignore('some/path/file.txt')
+
+def test_should_ignore_regex():
+    ignorer = PathIgnorer(['.git*/', '.*cache'])
+
+    assert ignorer.should_ignore('some/path/.git')
+    assert ignorer.should_ignore('some/path/.git/objects')
+    assert ignorer.should_ignore('some/path/.github')
+    assert ignorer.should_ignore('some/path/.cache')
+    assert not ignorer.should_ignore('some/path/dir')
+    assert not ignorer.should_ignore('some/path/file.txt')

@@ -1,0 +1,49 @@
+├── ./
+│   ├── LICENSE
+│   ├── requirements.txt
+│   ├── README.md
+│   ├── setup.py
+│   ├── .mapping-ignore
+    └── output.txt
+│   ├── dist/
+│       └── dirmap-0.1.tar.gz
+│   ├── tests/
+│   │   ├── test_directory_structure_generator.py
+│   │   ├── test_ignore_list_reader.py
+│       └── test_path_ignorer.py
+│   ├── tap/
+│   │   ├── HomebrewFormula/
+│   │       └── directory-mapper.rb
+│   ├── build/
+│   │   ├── bdist.macosx-11.0-arm64/
+│   │   ├── lib/
+│   │   │   ├── ignore/
+│   │   │   │   ├── path_ignorer.py
+│   │   │   │   ├── ignore_list_reader.py
+│   │   │       └── __init__.py
+│   │   │   ├── utils/
+│   │   │   │   ├── __init__.py
+│   │   │       └── logger.py
+│   │   │   ├── generator/
+│   │   │   │   ├── __init__.py
+│   │   │       └── directory_structure_generator.py
+│   ├── src/
+│   │   ├── __init__.py
+│       └── main.py
+│   │   ├── dirmap.egg-info/
+│   │   │   ├── PKG-INFO
+│   │   │   ├── SOURCES.txt
+│   │   │   ├── entry_points.txt
+│   │   │   ├── requires.txt
+│   │   │   ├── top_level.txt
+│   │       └── dependency_links.txt
+│   │   ├── ignore/
+│   │   │   ├── path_ignorer.py
+│   │   │   ├── ignore_list_reader.py
+│   │       └── __init__.py
+│   │   ├── utils/
+│   │   │   ├── __init__.py
+│   │       └── logger.py
+│   │   ├── generator/
+│   │   │   ├── __init__.py
+│   │       └── directory_structure_generator.py
