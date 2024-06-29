@@ -1,4 +1,4 @@
-# Dirmap
+# Dirmapper
 
 **Dirmapper** is a CLI tool to generate a directory structure mapping. It provides a visual representation of the directory and file structure, similar to the `tree` command, with support for `.gitignore`-like patterns to exclude specific files and directories.
 
