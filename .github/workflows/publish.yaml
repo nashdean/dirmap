@@ -20,11 +20,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install setuptools wheel twine
+        pip install build twine
 
     - name: Build package
       run: |
-        python setup.py sdist bdist_wheel
+        python -m build
 
     - name: Publish package to PyPI
       env:
@@ -32,3 +32,11 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
         twine upload dist/*
+    
+    - name: Trigger Homebrew tap update
+      run: |
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/nashdean/homebrew-dirmapper/actions/workflows/update-homebrew-formula.yml/dispatches \
+          -d '{"ref":"main", "inputs": {"tag": "${{ github.event.release.tag_name }}"}}'
