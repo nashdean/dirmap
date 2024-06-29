@@ -1,17 +1,22 @@
 import argparse
 import sys
 
-from ignore.ignore_list_reader import FileIgnoreListReader
-from ignore.path_ignorer import PathIgnorer
-from generator.directory_structure_generator import DirectoryStructureGenerator
-from utils.logger import logger, log_exception
+from dirmapper.utils.version import get_package_version
+from dirmapper.ignore.ignore_list_reader import FileIgnoreListReader
+from dirmapper.ignore.path_ignorer import PathIgnorer
+from dirmapper.generator.directory_structure_generator import DirectoryStructureGenerator
+from dirmapper.utils.logger import logger, log_exception
 
 def main():
+    package_name = "dirmapper"
+    version = get_package_version(package_name)
+
     parser = argparse.ArgumentParser(description="Generate a directory structure mapping.")
     parser.add_argument('root_directory', type=str, help="The root directory to map.")
     parser.add_argument('output_file', type=str, help="The output file to save the directory structure.")
     parser.add_argument('--ignore_file', type=str, default='.mapping-ignore', help="The ignore file listing directories and files to ignore.")
     parser.add_argument('--no_gitignore', action='store_true', help="Do not include patterns from .gitignore.")
+    parser.add_argument('--version', '-v', action='version', version=f'%(prog)s {version}', help="Show the version number and exit.")
     
     args = parser.parse_args()
     
