@@ -33,15 +33,20 @@ jobs:
         # Fetch the tarball URL and SHA256 checksum
         REPO="nashdean/dirmap"
         TAR_URL="https://github.com/$REPO/archive/refs/tags/$TAG.tar.gz"
-        SHA256=$(curl -L $TAR_URL | sha256sum | awk '{ print $1 }')
+        SHA256=$(curl -L $TAR_URL | shasum -a 256 | awk '{ print $1 }')
         
+        # Create temporary directory for homebrew-dirmap
+        mkdir homebrew-dirmap
+        cd homebrew-dirmap
+        git init
+        git remote add origin https://github.com/nashdean/homebrew-dirmap.git
+        git fetch origin
+        git checkout main
+
         # Update the formula file
-        sed -i "s|^  url \".*\"|  url \"$TAR_URL\"|" $FORMULA_FILE
-        sed -i "s|^  sha256 \".*\"|  sha256 \"$SHA256\"|" $FORMULA_FILE
+        echo -e "class Dirmapper < Formula\n  desc \"A CLI tool to generate a directory structure mapping\"\n  homepage \"https://github.com/nashdean/dirmap\"\n  url \"$TAR_URL\"\n  sha256 \"$SHA256\"\n  license \"MIT\"\n\n  depends_on \"python@3.12\"\n\n  def install\n    bin.install \"src/dirmapper/main.py\" => \"dirmap\"\n    system \"pip3\", \"install\", \"-r\", \"requirements.txt\"\n  end\n\n  test do\n    system \"#{bin}/dirmap\", \"--version\"\n  end\nend" > $FORMULA_FILE
 
         # Commit and push changes
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add $FORMULA_FILE
         git commit -m "Update dirmapper formula to $TAG"
-        git push
+        git push origin main
