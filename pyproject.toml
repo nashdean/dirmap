@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dirmapper"
+version = "1.0.5"
+description = "A CLI tool to generate a directory structure mapping."
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [
+    {name = "Nash Dean", email = "nashdean.github@gmail.com"}
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.urls]
+homepage = "https://github.com/nashdean/dirmap"
+
+[project.scripts]
+dirmap = "dirmapper.main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["dirmapper", "dirmapper.ignore", "dirmapper.generator", "dirmapper.utils"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"*" = ["*"]

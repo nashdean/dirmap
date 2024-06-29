@@ -18,11 +18,15 @@ jobs:
       with:
         python-version: '3.12'  # Replace with your Python version
 
-    - name: Check setup.py version
+    - name: Install toml package
+      run: |
+        python -m pip install toml
+
+    - name: Check pyproject.toml version
       run: |
         TAG=${GITHUB_REF#refs/tags/}
-        SETUP_PY_VERSION=$(python setup.py --version)
-        if [ "$TAG" != "$SETUP_PY_VERSION" ]; then
-          echo "Tag version ($TAG) does not match setup.py version ($SETUP_PY_VERSION)"
+        PYPROJECT_VERSION=$(python -c "import toml; pyproject = toml.load('pyproject.toml'); print(pyproject['project']['version'])")
+        if [ "$TAG" != "$PYPROJECT_VERSION" ]; then
+          echo "Tag version ($TAG) does not match pyproject.toml version ($PYPROJECT_VERSION)"
           exit 1
         fi

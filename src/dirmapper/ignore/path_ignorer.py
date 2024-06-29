@@ -1,5 +1,5 @@
 import re
-from utils.logger import logger
+from dirmapper.utils.logger import logger
 
 class PathIgnorer:
     def __init__(self, ignore_list):

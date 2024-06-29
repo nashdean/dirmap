@@ -1,6 +1,6 @@
 import os
 from abc import ABC, abstractmethod
-from utils.logger import logger
+from dirmapper.utils.logger import logger
 
 class IgnoreListReader(ABC):
     @abstractmethod

@@ -1,7 +1,7 @@
 import os
 import sys
-from utils.logger import log_exception
-from utils.logger import logger
+from dirmapper.utils.logger import log_exception
+from dirmapper.utils.logger import logger
 
 class DirectoryStructureGenerator:
     def __init__(self, root_dir, output_file, ignorer):
