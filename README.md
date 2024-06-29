@@ -61,6 +61,12 @@ Then run:
 dirmap /path/to/root_directory /path/to/output_file --ignore_file /path/to/.mapping-ignore
 ```
 
+**NOTE**: By default, the CLI ships with a `.mapping-ignore` file that will ignore the following:
+```
+.git/
+```
+This file can be overriden by specifiying your own *.mapping-ignore* file (named anything you want) using the flag specified earlier `--ignore_file /path/to/.mapping-ignore`.
+
 ### Disable .gitignore Integration
 
 By default, `dirmap` will also consider patterns in `.gitignore`. To disable this feature:
