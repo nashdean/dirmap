@@ -1,6 +1,6 @@
 # Dirmap
 
-**Dirmap** is a CLI tool to generate a directory structure mapping. It provides a visual representation of the directory and file structure, similar to the `tree` command, with support for `.gitignore`-like patterns to exclude specific files and directories.
+**Dirmapper** is a CLI tool to generate a directory structure mapping. It provides a visual representation of the directory and file structure, similar to the `tree` command, with support for `.gitignore`-like patterns to exclude specific files and directories.
 
 ## Features
 
@@ -12,18 +12,18 @@
 
 ### Using pipx
 
-It is recommended to use `pipx` to install `dirmap` in an isolated environment:
+It is recommended to use `pipx` to install `dirmapper` in an isolated environment:
 
 ```sh
-pipx install dirmap
+pipx install dirmapper
 ```
 
 ### Using pip
 
-You can also install `dirmap` using pip:
+You can also install `dirmapper` using pip:
 
 ```sh
-pip install dirmap
+pip install dirmapper
 ```
 
 ## Usage
