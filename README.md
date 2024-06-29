@@ -10,6 +10,15 @@
 
 ## Installation
 
+### Using Homebrew
+
+You can install `dirmapper` using Homebrew:
+
+```sh
+brew tap nashdean/dirmapper
+brew install dirmapper
+```
+
 ### Using pipx
 
 It is recommended to use `pipx` to install `dirmapper` in an isolated environment:
@@ -58,6 +67,20 @@ By default, `dirmap` will also consider patterns in `.gitignore`. To disable thi
 
 ```sh
 dirmap /path/to/root_directory /path/to/output_file --ignore_file /path/to/.mapping-ignore --no_gitignore
+```
+
+### Show Version
+
+To display the version of `dirmapper`:
+
+```sh
+dirmap --version
+```
+
+or
+
+```sh
+dirmap -v
 ```
 
 ## Example
