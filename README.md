@@ -15,7 +15,7 @@
 You can install `dirmapper` using Homebrew:
 
 ```sh
-brew tap nashdean/dirmapper
+brew tap nashdean/dirmap
 brew install dirmapper
 ```
 
@@ -139,6 +139,23 @@ pip install -e .[dev]
 
 ```sh
 pytest
+```
+
+## Troubleshooting
+
+### Homebrew
+If you have previously tapped and installed the dirmapper package, here’s how you can uninstall and untap it:
+
+1. Uninstall the Package:
+
+```sh
+brew uninstall dirmapper
+```
+
+2. Untap the Repository:
+
+```sh
+brew untap nashdean/dirmap
 ```
 
 ## Contributing
