@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='dirmapper',
-    version='1.0.3',
+    version='1.0.4',
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
     entry_points={
         'console_scripts': [
-            'dirmap=main:main',
+            'dirmap=src.main:main',
         ],
     },
     install_requires=[],
