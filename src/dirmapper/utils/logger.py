@@ -21,3 +21,7 @@ def log_exception(exc, stacktrace=False):
     logger.error("An error occurred: %s", exc)
     if stacktrace:
         logger.error("Stack Trace:", exc_info=True)
+
+def log_ignored_paths(ignore_counts):
+    for directory, count in ignore_counts.items():
+        logger.info(f"Ignoring {count} paths in folder '{directory}'")

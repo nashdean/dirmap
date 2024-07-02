@@ -1,6 +1,6 @@
 import os
 import sys
-from dirmapper.utils.logger import log_exception
+from dirmapper.utils.logger import log_exception, log_ignored_paths
 from dirmapper.utils.logger import logger
 from dirmapper.utils.sorting_strategy import AscendingSortStrategy, DescendingSortStrategy
 
@@ -42,11 +42,16 @@ class DirectoryStructureGenerator:
                     for i, filename in enumerate(filenames):
                         full_filename = os.path.join(dirpath, filename)
                         if self.ignorer.should_ignore(full_filename):
+                            logger.info(f"Ignoring path: {full_filename}")
                             continue
 
                         file_indent = sub_indent if i < len(filenames) - 1 else sub_indent[:-4] + '    '
                         connector = '├── ' if i < len(filenames) - 1 else '└── '
                         f.write('{}{}{}\n'.format(file_indent, connector, filename))
+
+            # Log the ignored paths after generating the directory structure
+            log_ignored_paths(self.ignorer.ignore_counts)
+
         except NotADirectoryError as e:
             log_exception(e)
             sys.exit(1)
