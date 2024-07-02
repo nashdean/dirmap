@@ -2,12 +2,16 @@ import os
 import sys
 from dirmapper.utils.logger import log_exception
 from dirmapper.utils.logger import logger
+from dirmapper.utils.sorting_strategy import AscendingSortStrategy, DescendingSortStrategy
 
 class DirectoryStructureGenerator:
-    def __init__(self, root_dir, output_file, ignorer):
+    def __init__(self, root_dir, output_file, ignorer, sort_order='asc'):
         self.root_dir = root_dir
         self.output_file = output_file
         self.ignorer = ignorer
+        self.sort_order = sort_order
+        self.sorting_strategy = AscendingSortStrategy() if sort_order == 'asc' else DescendingSortStrategy()
+        
         logger.info(f"Directory structure generator initialized for root dir: {root_dir} and output file: {output_file}")
 
     def generate(self):
@@ -16,9 +20,13 @@ class DirectoryStructureGenerator:
                 if not self.verify_path(self.root_dir):
                     raise NotADirectoryError(f'"{self.root_dir}" is not a valid path to a directory.')
                 logger.info(f"Generating directory structure to output file...")
+
                 for dirpath, dirnames, filenames in os.walk(self.root_dir):
                     if self.ignorer.should_ignore(dirpath):
                         continue
+
+                    dirnames = self.sorting_strategy.sort(dirnames)
+                    filenames = self.sorting_strategy.sort(filenames)
 
                     level = dirpath.replace(self.root_dir, '').count(os.sep)
                     indent = '│   ' * level

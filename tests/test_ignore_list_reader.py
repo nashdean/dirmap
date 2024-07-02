@@ -1,5 +1,5 @@
 import pytest
-from src.ignore.ignore_list_reader import FileIgnoreListReader
+from src.dirmapper.ignore.ignore_list_reader import FileIgnoreListReader
 
 def test_read_ignore_list(tmpdir):
     ignore_file = tmpdir.join('.mapping-ignore')
