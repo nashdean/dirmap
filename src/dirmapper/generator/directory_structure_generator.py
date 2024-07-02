@@ -1,11 +1,11 @@
 import os
 import sys
-from dirmapper.utils.logger import log_exception, log_ignored_paths
-from dirmapper.utils.logger import logger
+from dirmapper.utils.logger import log_exception, logger, log_ignored_paths
 from dirmapper.utils.sorting_strategy import AscendingSortStrategy, DescendingSortStrategy
+from dirmapper.ignore.path_ignorer import PathIgnorer
 
 class DirectoryStructureGenerator:
-    def __init__(self, root_dir, output_file, ignorer, sort_order='asc'):
+    def __init__(self, root_dir: str, output_file: str, ignorer: PathIgnorer, sort_order: str = 'asc'):
         self.root_dir = root_dir
         self.output_file = output_file
         self.ignorer = ignorer
@@ -14,7 +14,7 @@ class DirectoryStructureGenerator:
         
         logger.info(f"Directory structure generator initialized for root dir: {root_dir} and output file: {output_file}")
 
-    def generate(self):
+    def generate(self) -> None:
         try:
             with open(self.output_file, 'w') as f:
                 if not self.verify_path(self.root_dir):
@@ -42,7 +42,6 @@ class DirectoryStructureGenerator:
                     for i, filename in enumerate(filenames):
                         full_filename = os.path.join(dirpath, filename)
                         if self.ignorer.should_ignore(full_filename):
-                            logger.info(f"Ignoring path: {full_filename}")
                             continue
 
                         file_indent = sub_indent if i < len(filenames) - 1 else sub_indent[:-4] + '    '
@@ -50,13 +49,13 @@ class DirectoryStructureGenerator:
                         f.write('{}{}{}\n'.format(file_indent, connector, filename))
 
             # Log the ignored paths after generating the directory structure
-            log_ignored_paths(self.ignorer.ignore_counts)
+            log_ignored_paths(self.ignorer)
 
         except NotADirectoryError as e:
             log_exception(e)
             sys.exit(1)
     
-    def verify_path(self, path=None):
+    def verify_path(self, path: str = None) -> bool:
         if path is not None:
             return os.path.isdir(str(path))
         return os.path.isdir(self.root_dir)
