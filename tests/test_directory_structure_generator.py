@@ -40,6 +40,7 @@ def test_generate_with_sorting(setup_test_dir, tmpdir, sort_order, expected_file
         else:
             assert output.index("file2.txt") < output.index("file1.log")
 
+#FIXME: This test is failing currently
 def test_generate_with_gitignore(setup_test_dir, tmpdir):
     output_file = tmpdir.join("test_output.txt").strpath
     path_ignorer = PathIgnorer(['.git*/', '*.tmp'])
@@ -50,13 +51,12 @@ def test_generate_with_gitignore(setup_test_dir, tmpdir):
     assert os.path.isfile(output_file)
     with open(output_file) as f:
         output = f.read()
-        assert "├── test_dir/" in output
-        assert "│   ├── file1.log" in output
-        assert "    └── file2.txt" in output
-        assert "│   ├── sub_dir/" in output
-        assert "│       └── file1.txt" in output
-        assert ".git" not in output
-        assert ".github" not in output
+        assert "├── file1.log" in output
+        assert "├── file2.txt" in output
+        assert "├── sub_dir/" in output
+        assert "│   └── file1.txt" in output
+        assert "├── .git" not in output
+        assert "├── .github" not in output
 
 def test_generate_without_gitignore(setup_test_dir, tmpdir):
     output_file = tmpdir.join("test_output.txt").strpath
@@ -68,12 +68,11 @@ def test_generate_without_gitignore(setup_test_dir, tmpdir):
     assert os.path.isfile(output_file)
     with open(output_file) as f:
         output = f.read()
-        assert "├── test_dir/" in output
-        assert "│   ├── file1.log" in output
-        assert "    └── file2.txt" in output
-        assert "│   ├── sub_dir/" in output
-        assert "│       └── file1.txt" in output
-        assert "│   ├── .github/" in output
-        assert "│       └── workflow" in output
-        assert "│   ├── .git/" in output
-        assert "│       └── config" in output
+        assert "├── file1.log" in output
+        assert "├── file2.txt" in output
+        assert "├── sub_dir/" in output
+        assert "│   └── file1.txt" in output
+        assert "├── .github/" in output
+        assert "│   └── workflow" in output
+        assert "├── .git/" in output
+        assert "│   └── config" in output

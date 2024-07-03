@@ -33,3 +33,8 @@ run:
 	@echo "Running test `dirmap` call"
 	dirmap --version
 	dirmap . directory_structure.txt
+
+run-asc:
+	@echo "Running test `dirmap` call --sort asc"
+	dirmap --version
+	dirmap . directory_structure.txt --sort asc
