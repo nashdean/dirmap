@@ -1,6 +1,7 @@
 # Project directory stuff
 directory_structure.txt
 README_INTERNAL.md
+style_outputs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
