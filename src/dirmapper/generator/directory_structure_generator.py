@@ -4,7 +4,7 @@ from typing import List, Tuple
 from dirmapper.utils.logger import log_exception, logger, log_ignored_paths
 from dirmapper.utils.sorting_strategy import NoSortStrategy, AscendingSortStrategy, DescendingSortStrategy
 from dirmapper.ignore.path_ignorer import PathIgnorer
-from dirmapper.config import STYLE_MAP, EXTENSIONS
+from dirmapper.config import STYLE_MAP, EXTENSIONS, FORMATTER_MAP
 from dirmapper.styles.base_style import BaseStyle
 from dirmapper.formatter.formatter import Formatter
 
@@ -48,8 +48,11 @@ class DirectoryStructureGenerator:
         except NotADirectoryError as e:
             log_exception(e)
             sys.exit(1)
+        except Exception as e:
+            log_exception(e)
+            print(f"Error: {e}")
 
-    def _build_sorted_structure(self, current_dir: str, level: int) -> List[Tuple[str, int]]:
+    def _build_sorted_structure(self, current_dir: str, level: int) -> List[Tuple[str, int, str]]:
         structure = []
         dir_contents = os.listdir(current_dir)
         sorted_contents = self.sorting_strategy.sort(dir_contents)
@@ -59,7 +62,7 @@ class DirectoryStructureGenerator:
             if self.ignorer.should_ignore(item_path):
                 continue
 
-            structure.append((item_path, level))
+            structure.append((item_path, level, item))
 
             if os.path.isdir(item_path):
                 structure.extend(self._build_sorted_structure(item_path, level + 1))
