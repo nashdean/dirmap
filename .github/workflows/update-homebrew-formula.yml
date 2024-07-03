@@ -41,7 +41,7 @@ jobs:
         git init
         git remote add origin https://github.com/nashdean/homebrew-dirmap.git
         git fetch origin
-        git checkout main
+        git checkout master
 
         # Update the formula file
         echo -e "class Dirmapper < Formula\n  desc \"A CLI tool to generate a directory structure mapping\"\n  homepage \"https://github.com/nashdean/dirmap\"\n  url \"$TAR_URL\"\n  sha256 \"$SHA256\"\n  license \"MIT\"\n\n  depends_on \"python@3.12\"\n\n  def install\n    bin.install \"src/dirmapper/main.py\" => \"dirmap\"\n    system \"pip3\", \"install\", \"-r\", \"requirements.txt\"\n  end\n\n  test do\n    system \"#{bin}/dirmap\", \"--version\"\n  end\nend" > $FORMULA_FILE
@@ -49,4 +49,4 @@ jobs:
         # Commit and push changes
         git add $FORMULA_FILE
         git commit -m "Update dirmapper formula to $TAG"
-        git push origin main
+        git push origin master

@@ -1,5 +1,5 @@
 import pytest
-from src.ignore.path_ignorer import PathIgnorer
+from dirmapper.ignore.path_ignorer import PathIgnorer
 
 def test_should_ignore():
     ignorer = PathIgnorer(['.git/', '.github/', '.*cache'])

@@ -16,10 +16,11 @@ def main():
     parser.add_argument('output_file', type=str, help="The output file to save the directory structure.")
     parser.add_argument('--ignore_file', type=str, default='.mapping-ignore', help="The ignore file listing directories and files to ignore.")
     parser.add_argument('--no_gitignore', action='store_true', help="Do not include patterns from .gitignore.")
+    parser.add_argument('--sort', choices=['asc', 'desc'], help="Sort files and folders in ascending (asc) or descending (desc) order. Default is no sorting.")
     parser.add_argument('--version', '-v', action='version', version=f'%(prog)s {version}', help="Show the version number and exit.")
     
     args = parser.parse_args()
-    
+
     try:
         ignore_list_reader = FileIgnoreListReader()
         ignore_list = ignore_list_reader.read_ignore_list(args.ignore_file)
@@ -29,12 +30,15 @@ def main():
             ignore_list.extend(gitignore_list)
         
         path_ignorer = PathIgnorer(ignore_list)
-        directory_structure_generator = DirectoryStructureGenerator(args.root_directory, args.output_file, path_ignorer)
+
+        # Instantiate DirectoryStructureGenerator
+        directory_structure_generator = DirectoryStructureGenerator(args.root_directory, args.output_file, path_ignorer, args.sort)
         
         directory_structure_generator.generate()
         logger.info(f"Directory structure saved to {args.output_file}")
     except Exception as e:
         log_exception(e)
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
