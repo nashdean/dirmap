@@ -5,6 +5,10 @@ class SortingStrategy(ABC):
     def sort(self, items):
         pass
 
+class NoSortStrategy(SortingStrategy):
+    def sort(self, items):
+        return items
+        
 class AscendingSortStrategy(SortingStrategy):
     def sort(self, items):
         return sorted(items)

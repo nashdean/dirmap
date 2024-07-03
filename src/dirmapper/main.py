@@ -16,7 +16,7 @@ def main():
     parser.add_argument('output_file', type=str, help="The output file to save the directory structure.")
     parser.add_argument('--ignore_file', type=str, default='.mapping-ignore', help="The ignore file listing directories and files to ignore.")
     parser.add_argument('--no_gitignore', action='store_true', help="Do not include patterns from .gitignore.")
-    parser.add_argument('--sort', choices=['asc', 'desc'], default='asc', help="Sort files and folders in ascending (asc) or descending (desc) order.")
+    parser.add_argument('--sort', choices=['asc', 'desc'], help="Sort files and folders in ascending (asc) or descending (desc) order. Default is no sorting.")
     parser.add_argument('--version', '-v', action='version', version=f'%(prog)s {version}', help="Show the version number and exit.")
     
     args = parser.parse_args()
