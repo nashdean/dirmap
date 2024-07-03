@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import Optional, TextIO
 from dirmapper.utils.logger import log_exception, logger, log_ignored_paths
 from dirmapper.utils.sorting_strategy import AscendingSortStrategy, DescendingSortStrategy
 from dirmapper.ignore.path_ignorer import PathIgnorer
@@ -9,7 +10,6 @@ class DirectoryStructureGenerator:
         self.root_dir = root_dir
         self.output_file = output_file
         self.ignorer = ignorer
-        self.sort_order = sort_order
         self.sorting_strategy = AscendingSortStrategy() if sort_order == 'asc' else DescendingSortStrategy()
         
         logger.info(f"Directory structure generator initialized for root dir: {root_dir} and output file: {output_file}")
@@ -21,41 +21,37 @@ class DirectoryStructureGenerator:
                     raise NotADirectoryError(f'"{self.root_dir}" is not a valid path to a directory.')
                 logger.info(f"Generating directory structure to output file...")
 
-                for dirpath, dirnames, filenames in os.walk(self.root_dir):
-                    if self.ignorer.should_ignore(dirpath):
-                        continue
-
-                    dirnames = self.sorting_strategy.sort(dirnames)
-                    filenames = self.sorting_strategy.sort(filenames)
-
-                    level = dirpath.replace(self.root_dir, '').count(os.sep)
-                    indent = '│   ' * level
-                    sub_indent = '│   ' * (level + 1)
-                    f.write('{}├── {}/\n'.format(indent, os.path.basename(dirpath)))
-
-                    # Copy dirnames list to avoid modifying it while iterating
-                    for dirname in list(dirnames):
-                        full_dirname = os.path.join(dirpath, dirname)
-                        if self.ignorer.should_ignore(full_dirname):
-                            dirnames.remove(dirname)
-
-                    for i, filename in enumerate(filenames):
-                        full_filename = os.path.join(dirpath, filename)
-                        if self.ignorer.should_ignore(full_filename):
-                            continue
-
-                        file_indent = sub_indent if i < len(filenames) - 1 else sub_indent[:-4] + '    '
-                        connector = '├── ' if i < len(filenames) - 1 else '└── '
-                        f.write('{}{}{}\n'.format(file_indent, connector, filename))
+                self._write_tree(f, self.root_dir, level=0)
 
             # Log the ignored paths after generating the directory structure
             log_ignored_paths(self.ignorer)
 
-        except NotADirectoryError as e:
+        except (NotADirectoryError, OSError) as e:
             log_exception(e)
             sys.exit(1)
+
+    def _write_tree(self, f: TextIO, current_dir: str, level: int) -> None:
+        try:
+            dir_contents = sorted(os.listdir(current_dir), key=self.sorting_strategy.sort)
+        except OSError as e:
+            logger.error(f"Error reading directory contents: {e}")
+            return
+
+        indent = '│   ' * level
+
+        for i, item in enumerate(dir_contents):
+            item_path = os.path.join(current_dir, item)
+            if self.ignorer.should_ignore(item_path):
+                continue
+
+            is_last = (i == len(dir_contents) - 1)
+            connector = '└── ' if is_last else '├── '
+
+            if os.path.isdir(item_path):
+                f.write(f"{indent}{connector}{item}/\n")
+                self._write_tree(f, item_path, level + 1)
+            else:
+                f.write(f"{indent}{connector}{item}\n")
     
-    def verify_path(self, path: str = None) -> bool:
-        if path is not None:
-            return os.path.isdir(str(path))
-        return os.path.isdir(self.root_dir)
+    def verify_path(self, path: Optional[str] = None) -> bool:
+        return os.path.isdir(str(path)) if path else os.path.isdir(self.root_dir)
