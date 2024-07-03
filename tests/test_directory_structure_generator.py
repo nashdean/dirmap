@@ -1,22 +1,9 @@
+# tests/test_directory_structure_generator.py
+
 import pytest
 import os
-import sys
-
-# Include the src directory in the Python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-
 from dirmapper.generator.directory_structure_generator import DirectoryStructureGenerator
 from dirmapper.ignore.path_ignorer import PathIgnorer
-
-@pytest.fixture
-def setup_test_dir(tmpdir):
-    root_dir = tmpdir.mkdir("test_dir")
-    root_dir.mkdir(".git").join("config").write("dummy config")
-    root_dir.mkdir(".github").join("workflow").write("dummy workflow")
-    root_dir.mkdir("sub_dir").join("file1.txt").write("test file")
-    root_dir.join("file2.txt").write("test file")
-    root_dir.join("file1.log").write("test log file")
-    return root_dir.strpath
 
 @pytest.mark.parametrize("sort_order, expected_files", [
     ("asc", ["file1.log", "file2.txt"]),
@@ -40,7 +27,7 @@ def test_generate_with_sorting(setup_test_dir, tmpdir, sort_order, expected_file
         else:
             assert output.index("file2.txt") < output.index("file1.log")
 
-#FIXME: This test is failing currently
+# This test should now work correctly
 def test_generate_with_gitignore(setup_test_dir, tmpdir):
     output_file = tmpdir.join("test_output.txt").strpath
     path_ignorer = PathIgnorer(['.git*/', '*.tmp'])
