@@ -2,6 +2,7 @@
 directory_structure.txt
 README_INTERNAL.md
 style_outputs/
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -9,11 +9,11 @@ class HTMLStyle(BaseStyle):
 
         for item_path, level, item in structure:
             if level > previous_level:
-                result.append('<ul>' * (level - previous_level))
+                result.append('<ul>')
             elif level < previous_level:
                 result.append('</ul>' * (previous_level - level))
 
-            relative_path = os.path.relpath(item_path)
+            relative_path = os.path.relpath(item_path, start=structure[0][0])
             if os.path.isdir(item_path):
                 result.append(f'<li><a href="{relative_path}">{item}/</a></li>')
             else:
