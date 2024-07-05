@@ -1,14 +1,33 @@
-# main.py
-
 import argparse
 import sys
 
 from dirmapper.utils.version import get_package_version
-from dirmapper.ignore.ignore_list_reader import FileIgnoreListReader
+from dirmapper.ignore.ignore_list_reader import IgnoreListReader
 from dirmapper.ignore.path_ignorer import PathIgnorer
 from dirmapper.generator.directory_structure_generator import DirectoryStructureGenerator
 from dirmapper.utils.logger import logger, log_exception
 from dirmapper.config import STYLE_MAP, FORMATTER_MAP
+
+def read_ignore_patterns(ignore_file: str, include_gitignore: bool) -> list:
+    """
+    Reads ignore patterns from the specified ignore file and optionally includes patterns from .gitignore.
+
+    Args:
+        ignore_file (str): The path to the ignore file listing directories and files to ignore.
+        include_gitignore (bool): Flag indicating whether to include patterns from .gitignore.
+
+    Returns:
+        list: A list of ignore patterns.
+    """
+    ignore_list_reader = IgnoreListReader()
+    ignore_list = ignore_list_reader.read_ignore_list(ignore_file)
+    
+    if include_gitignore:
+        gitignore_list = ignore_list_reader.read_ignore_list('.gitignore')
+        ignore_list.extend(gitignore_list)
+    
+    return ignore_list
+
 
 def main():
     package_name = "dirmapper"
@@ -27,14 +46,8 @@ def main():
     args = parser.parse_args()
 
     try:
-        ignore_list_reader = FileIgnoreListReader()
-        ignore_list = ignore_list_reader.read_ignore_list(args.ignore_file)
-        
-        if not args.no_gitignore:
-            gitignore_list = ignore_list_reader.read_ignore_list('.gitignore')
-            ignore_list.extend(gitignore_list)
-        
-        path_ignorer = PathIgnorer(ignore_list)
+        ignore_patterns = read_ignore_patterns(args.ignore_file, not args.no_gitignore)
+        path_ignorer = PathIgnorer(ignore_patterns)
 
         style_class = STYLE_MAP[args.style]()
         formatter_class = FORMATTER_MAP[args.format]()
