@@ -60,7 +60,7 @@ class RegexIgnorePattern(IgnorePattern):
         Returns:
             bool: True if the path matches the regex pattern, False otherwise.
         """
-        return bool(self.regex.match(path))
+        return bool(self.regex.search(path))
 
 class IgnoreListReader:
     """

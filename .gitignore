@@ -4,6 +4,7 @@ README_INTERNAL.md
 style_outputs/
 .DS_Store
 test.py
+htmlcov
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

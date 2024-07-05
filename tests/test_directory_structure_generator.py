@@ -12,6 +12,20 @@ from dirmapper.ignore.ignore_list_reader import SimpleIgnorePattern, RegexIgnore
     ("desc", True, ["file2.txt", "file1.log"]),
 ], ids=["ascending_insensitive", "descending_insensitive", "ascending_sensitive", "descending_sensitive"])
 def test_generate_with_sorting(setup_test_dir, tmpdir, sort_order, case_sensitive, expected_files):
+    """
+    Test the generate method of DirectoryStructureGenerator with different sorting strategies.
+
+    This test uses parameterization to test different combinations of sorting order and case sensitivity.
+    It verifies that the directory structure is correctly generated and sorted according to the specified
+    sorting strategy. The expected order of files in the output is checked to ensure correctness.
+
+    Args:
+        setup_test_dir: A pytest fixture that sets up a test directory structure.
+        tmpdir: A pytest fixture that provides a temporary directory unique to the test invocation.
+        sort_order: The sorting order ('asc' for ascending, 'desc' for descending).
+        case_sensitive: Boolean flag indicating whether sorting is case-sensitive.
+        expected_files: The expected order of files in the generated output.
+    """
     output_file = tmpdir.join("test_output.txt").strpath
     path_ignorer = PathIgnorer([
         SimpleIgnorePattern('.git*/'), 
@@ -33,18 +47,21 @@ def test_generate_with_sorting(setup_test_dir, tmpdir, sort_order, case_sensitiv
         output = f.read()
         for filename in expected_files:
             assert filename in output
-        
-        print(output.index(expected_files[0]))
-        output.index(expected_files[1])
-        if sort_order == "asc":
-            for i in range(len(expected_files) - 1):
-                assert output.index(expected_files[i]) < output.index(expected_files[i + 1])
-        else:
-            for i in range(len(expected_files) - 1):
-                assert output.index(expected_files[i]) > output.index(expected_files[i + 1])
-
-
+        print(output)
+        assert output.index(expected_files[0]) < output.index(expected_files[1])
+       
 def test_generate_with_gitignore(setup_test_dir, tmpdir):
+    """
+    Test the generate method of DirectoryStructureGenerator with gitignore patterns.
+
+    This test verifies that the directory structure is correctly generated while ignoring
+    paths specified by gitignore patterns (like .git and .tmp files). It ensures that
+    ignored paths are not present in the generated output.
+
+    Args:
+        setup_test_dir: A pytest fixture that sets up a test directory structure.
+        tmpdir: A pytest fixture that provides a temporary directory unique to the test invocation.
+    """
     output_file = tmpdir.join("test_output.txt").strpath
     path_ignorer = PathIgnorer([
         SimpleIgnorePattern('.git'), 

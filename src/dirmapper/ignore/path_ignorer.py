@@ -37,10 +37,14 @@ class PathIgnorer:
             bool: True if the path should be ignored, False otherwise.
         """
         for pattern in self.ignore_patterns:
+            print('pattern:',pattern)
+            print('path:',path,'\n')
             if pattern.matches(path):
+                print(f"Ignoring path {path} due to pattern {pattern.pattern}")
                 self._increment_ignore_count(path)
                 self._increment_root_ignore_count(path)
                 return True
+        print(f"Not ignoring path {path}")
         return False
 
     def _increment_ignore_count(self, path: str) -> None:
