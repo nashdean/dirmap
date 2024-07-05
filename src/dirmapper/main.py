@@ -37,9 +37,9 @@ def main():
         sort_order, case_sensitive = parse_sort_argument(args.sort)
 
         if sort_order == 'asc':
-            sorting_strategy = AscendingSortStrategy()
+            sorting_strategy = AscendingSortStrategy(case_sensitive=case_sensitive)
         elif sort_order == 'desc':
-            sorting_strategy = DescendingSortStrategy()
+            sorting_strategy = DescendingSortStrategy(case_sensitive=case_sensitive)
         else:
             sorting_strategy = NoSortStrategy()
 
@@ -49,7 +49,6 @@ def main():
             args.output_file, 
             path_ignorer, 
             sorting_strategy=sorting_strategy, 
-            case_sensitive=case_sensitive,
             style=style_class, 
             formatter=formatter_class
         )

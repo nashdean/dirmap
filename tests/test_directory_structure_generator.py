@@ -33,13 +33,13 @@ def test_generate_with_sorting(setup_test_dir, tmpdir, sort_order, case_sensitiv
     ])
 
     if sort_order == "asc":
-        sorting_strategy = AscendingSortStrategy()
+        sorting_strategy = AscendingSortStrategy(case_sensitive)
     elif sort_order == "desc":
-        sorting_strategy = DescendingSortStrategy()
+        sorting_strategy = DescendingSortStrategy(case_sensitive)
     else:
         sorting_strategy = NoSortStrategy()
 
-    generator = DirectoryStructureGenerator(setup_test_dir, output_file, path_ignorer, sorting_strategy, case_sensitive)
+    generator = DirectoryStructureGenerator(setup_test_dir, output_file, path_ignorer, sorting_strategy)
     generator.generate()
     
     assert os.path.isfile(output_file)

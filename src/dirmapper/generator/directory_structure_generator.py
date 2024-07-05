@@ -29,7 +29,6 @@ class DirectoryStructureGenerator:
         self.output_file = output_file
         self.ignorer = ignorer
         self.sorting_strategy = sorting_strategy
-        self.case_sensitive = case_sensitive
         self.style = style if style else STYLE_MAP['tree']()
         self.formatter = formatter if formatter else FORMATTER_MAP['plain']()
 
@@ -81,7 +80,7 @@ class DirectoryStructureGenerator:
         """
         structure = []
         dir_contents = os.listdir(current_dir)
-        sorted_contents = self.sorting_strategy.sort(dir_contents, case_sensitive=self.case_sensitive)
+        sorted_contents = self.sorting_strategy.sort(dir_contents)
 
         for item in sorted_contents:
             item_path = os.path.join(current_dir, item)

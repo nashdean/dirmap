@@ -1,1 +1,14 @@
-.git
+# Ignore .git directory
+.git/
+
+# Ignore all __pycache__ directories
+regex:^.*__pycache__$
+
+# Ignore all .pyc files
+regex:^.*\.pyc$
+
+# Ignore all .egg-info directories
+regex:^.*\.egg-info$
+
+# Ignore all dist directories
+regex:^.*dist$
