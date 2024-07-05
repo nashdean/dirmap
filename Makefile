@@ -8,7 +8,8 @@ VERSION = $(shell grep -oE 'version = "[^"]+"' $(PYPROJECT_TOML) | sed -E 's/ver
 # Define the package name
 PACKAGE_NAME = dirmapper
 
-.PHONY: build clean install uninstall reinstall
+.PHONY: build clean install uninstall reinstall check-pytest-cov run-coverage
+
 
 build: clean
 	@echo "Building the package..."
@@ -35,7 +36,7 @@ run:
 	dirmap . directory_structure.txt
 
 run-asc:
-	@echo "Running test `dirmap` call --sort asc"
+	@echo "Running test call --sort asc"
 	dirmap --version
 	dirmap . directory_structure.txt --sort asc
 
@@ -56,3 +57,23 @@ run-all-styles:
 	@echo "Running test  tree test."
 	dirmap . ./style_outputs/tree_output.txt --sort asc --style tree
 
+# Check if pytest-cov is installed
+check-pytest-cov:
+	@python3 -m pip show pytest-cov > /dev/null || (echo "pytest-cov is not installed. Please install it using 'pip install pytest-cov'." && exit 1)
+
+# Run the coverage command
+run-coverage: check-pytest-cov
+	@echo "Running coverage tests..."
+	@python3 -m pytest --cov=dirmapper tests/
+
+# Run the coverage command
+run-coverage-html: check-pytest-cov
+	@echo "Running coverage tests..."
+	@python3 -m pytest --cov=dirmapper --cov-report=html
+
+# Add a default command to run coverage in html
+coverage-vv: run-coverage-html
+
+# Add a default command to run coverage
+cov: run-coverage
+coverage: cov

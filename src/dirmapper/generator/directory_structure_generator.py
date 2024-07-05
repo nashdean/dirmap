@@ -1,34 +1,49 @@
+# directory_structure_generator.py
+
 import os
 import sys
 from typing import List, Tuple
 from dirmapper.utils.logger import log_exception, logger, log_ignored_paths
-from dirmapper.utils.sorting_strategy import NoSortStrategy, AscendingSortStrategy, DescendingSortStrategy
+from dirmapper.utils.sorting_strategy import SortingStrategy
+from dirmapper.ignore.ignore_list_reader import IgnoreListReader
 from dirmapper.ignore.path_ignorer import PathIgnorer
 from dirmapper.config import STYLE_MAP, EXTENSIONS, FORMATTER_MAP
 from dirmapper.styles.base_style import BaseStyle
 from dirmapper.formatter.formatter import Formatter
 
 class DirectoryStructureGenerator:
-    def __init__(self, root_dir: str, output_file: str, ignorer: PathIgnorer, sort_order: str = None, style: BaseStyle = None, formatter: Formatter = None):
+    """
+    Class to generate a directory structure mapping.
+    
+    Attributes:
+        root_dir (str): The root directory to map.
+        output_file (str): The output file to save the directory structure.
+        ignorer (PathIgnorer): Object to handle path ignoring.
+        sort_order (str): The order to sort the directory structure ('asc', 'desc', or None).
+        style (BaseStyle): The style to use for the directory structure output.
+        formatter (Formatter): The formatter to use for the directory structure output.
+        sorting_strategy (SortingStrategy): The strategy to use for sorting.
+    """
+    def __init__(self, root_dir: str, output_file: str, ignorer: PathIgnorer, sorting_strategy: SortingStrategy, case_sensitive: bool = True, style: BaseStyle = None, formatter: Formatter = None):
         self.root_dir = root_dir
         self.output_file = output_file
         self.ignorer = ignorer
-        self.sort_order = sort_order
+        self.sorting_strategy = sorting_strategy
         self.style = style if style else STYLE_MAP['tree']()
         self.formatter = formatter if formatter else FORMATTER_MAP['plain']()
-
-        if sort_order == 'asc':
-            self.sorting_strategy = AscendingSortStrategy()
-        elif sort_order == 'desc':
-            self.sorting_strategy = DescendingSortStrategy()
-        else:
-            self.sorting_strategy = NoSortStrategy()
 
         self._validate_file_extension()
 
         logger.info(f"Directory structure generator initialized for root dir: {root_dir}, output file: {output_file}, style: {self.style.__class__.__name__}, formatter: {self.formatter.__class__.__name__}")
 
     def generate(self) -> None:
+        """
+        Generate the directory structure and write it to the output file.
+        
+        Raises:
+            NotADirectoryError: If the root directory is not valid.
+            Exception: If any other error occurs during generation.
+        """
         try:
             if not self.verify_path(self.root_dir):
                 raise NotADirectoryError(f'"{self.root_dir}" is not a valid path to a directory.')
@@ -53,6 +68,16 @@ class DirectoryStructureGenerator:
             print(f"Error: {e}")
 
     def _build_sorted_structure(self, current_dir: str, level: int) -> List[Tuple[str, int, str]]:
+        """
+        Build the sorted directory structure.
+        
+        Args:
+            current_dir (str): The current directory to build the structure from.
+            level (int): The current level of depth in the directory structure.
+        
+        Returns:
+            List[Tuple[str, int, str]]: The sorted directory structure.
+        """
         structure = []
         dir_contents = os.listdir(current_dir)
         sorted_contents = self.sorting_strategy.sort(dir_contents)
@@ -70,10 +95,25 @@ class DirectoryStructureGenerator:
         return structure
 
     def _validate_file_extension(self) -> None:
+        """
+        Validate the output file extension based on the selected style.
+        
+        Raises:
+            ValueError: If the output file extension does not match the expected extension for the selected style.
+        """
         style_name = self.style.__class__.__name__.lower().replace('style', '')
         expected_extension = EXTENSIONS.get(style_name, '.txt')
         if not self.output_file.endswith(expected_extension):
             raise ValueError(f"Output file '{self.output_file}' does not match the expected extension for style '{self.style.__class__.__name__}': {expected_extension}")
 
     def verify_path(self, path: str = None) -> bool:
+        """
+        Verify if a path is a valid directory.
+        
+        Args:
+            path (str): The path to verify.
+        
+        Returns:
+            bool: True if the path is a valid directory, False otherwise.
+        """
         return os.path.isdir(str(path)) if path else os.path.isdir(self.root_dir)
