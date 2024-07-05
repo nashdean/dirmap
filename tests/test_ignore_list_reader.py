@@ -1,11 +1,11 @@
 import pytest
-from src.dirmapper.ignore.ignore_list_reader import FileIgnoreListReader
+from src.dirmapper.ignore.ignore_list_reader import IgnoreListReader
 
 def test_read_ignore_list(tmpdir):
     ignore_file = tmpdir.join('.mapping-ignore')
     ignore_file.write("ignore_this\nignore_that\n")
     
-    reader = FileIgnoreListReader()
+    reader = IgnoreListReader()
     ignore_list = reader.read_ignore_list(ignore_file.strpath)
     
     assert isinstance(ignore_list, list)

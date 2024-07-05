@@ -4,7 +4,7 @@ import os
 import sys
 from typing import List, Tuple
 from dirmapper.utils.logger import log_exception, logger, log_ignored_paths
-from dirmapper.utils.sorting_strategy import NoSortStrategy, AscendingSortStrategy, DescendingSortStrategy
+from dirmapper.utils.sorting_strategy import SortingStrategy
 from dirmapper.ignore.ignore_list_reader import IgnoreListReader
 from dirmapper.ignore.path_ignorer import PathIgnorer
 from dirmapper.config import STYLE_MAP, EXTENSIONS, FORMATTER_MAP
@@ -24,20 +24,14 @@ class DirectoryStructureGenerator:
         formatter (Formatter): The formatter to use for the directory structure output.
         sorting_strategy (SortingStrategy): The strategy to use for sorting.
     """
-    def __init__(self, root_dir: str, output_file: str, ignorer: PathIgnorer, sort_order: str = None, style: BaseStyle = None, formatter: Formatter = None):
+    def __init__(self, root_dir: str, output_file: str, ignorer: PathIgnorer, sorting_strategy: SortingStrategy, case_sensitive: bool = True, style: BaseStyle = None, formatter: Formatter = None):
         self.root_dir = root_dir
         self.output_file = output_file
         self.ignorer = ignorer
-        self.sort_order = sort_order
+        self.sorting_strategy = sorting_strategy
+        self.case_sensitive = case_sensitive
         self.style = style if style else STYLE_MAP['tree']()
         self.formatter = formatter if formatter else FORMATTER_MAP['plain']()
-
-        if sort_order == 'asc':
-            self.sorting_strategy = AscendingSortStrategy()
-        elif sort_order == 'desc':
-            self.sorting_strategy = DescendingSortStrategy()
-        else:
-            self.sorting_strategy = NoSortStrategy()
 
         self._validate_file_extension()
 
@@ -87,7 +81,7 @@ class DirectoryStructureGenerator:
         """
         structure = []
         dir_contents = os.listdir(current_dir)
-        sorted_contents = self.sorting_strategy.sort(dir_contents)
+        sorted_contents = self.sorting_strategy.sort(dir_contents, case_sensitive=self.case_sensitive)
 
         for item in sorted_contents:
             item_path = os.path.join(current_dir, item)
