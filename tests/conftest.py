@@ -1,4 +1,4 @@
-# tests/fixtures.py
+# tests/conftest.py
 
 import pytest
 import os
