@@ -2,44 +2,29 @@ import re
 import os
 from collections import defaultdict
 from typing import List, Dict, Set
+from dirmapper.ignore.ignore_list_reader import IgnorePattern
 
 class PathIgnorer:
     """
     Class to manage path ignoring based on a list of ignore patterns.
     
     Attributes:
-        ignore_patterns (List[str]): A list of regex patterns for paths to ignore.
+        ignore_patterns (List[IgnorePattern]): A list of IgnorePattern objects for paths to ignore.
         ignore_counts (defaultdict): A dictionary to keep track of ignored paths per directory.
         root_ignored_counts (defaultdict): A dictionary to keep track of ignored paths per root directory.
         root_directories (Set[str]): A set of root directories.
     """
-    def __init__(self, ignore_list: List[str]):
+    def __init__(self, ignore_list: List[IgnorePattern]):
         """
         Initialize the PathIgnorer with a list of ignore patterns.
         
         Args:
-            ignore_list (List[str]): The list of patterns to ignore.
+            ignore_list (List[IgnorePattern]): The list of patterns to ignore.
         """
-        self.ignore_patterns = [self._convert_pattern(pattern) for pattern in ignore_list]
+        self.ignore_patterns = ignore_list
         self.ignore_counts = defaultdict(int)
         self.root_ignored_counts = defaultdict(int)
         self.root_directories = set()
-
-    def _convert_pattern(self, pattern: str) -> str:
-        """
-        Convert a simple pattern to a regex pattern.
-        
-        Args:
-            pattern (str): The simple pattern to convert.
-        
-        Returns:
-            str: The converted regex pattern.
-        """
-        pattern = pattern.strip()
-        if pattern.endswith('/'):
-            pattern = pattern[:-1] + '(/.*)?'
-        pattern = pattern.replace('.', r'\.').replace('*', r'.*')
-        return pattern
 
     def should_ignore(self, path: str) -> bool:
         """
@@ -52,7 +37,7 @@ class PathIgnorer:
             bool: True if the path should be ignored, False otherwise.
         """
         for pattern in self.ignore_patterns:
-            if re.search(pattern, path):
+            if pattern.matches(path):
                 self._increment_ignore_count(path)
                 self._increment_root_ignore_count(path)
                 return True
@@ -89,9 +74,8 @@ class PathIgnorer:
             str: The root directory of the path.
         """
         for pattern in self.ignore_patterns:
-            match = re.match(pattern, path)
-            if match:
-                root_dir = match.group().split('/')[0]
+            if pattern.matches(path):
+                root_dir = path.split('/')[0]
                 self.root_directories.add(root_dir)
                 return root_dir
         return os.path.dirname(path)

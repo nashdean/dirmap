@@ -1,5 +1,3 @@
-# ignore_list_reader.py
-
 from typing import List
 import re
 
