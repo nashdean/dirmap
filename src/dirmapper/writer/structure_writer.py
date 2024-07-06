@@ -8,7 +8,16 @@ class StructureWriter:
         self.base_path = base_path
 
     def create_structure(self, structure: dict):
-        self._create_structure_from_template(self.base_path, structure)
+        if 'meta' not in structure or 'template' not in structure:
+            raise ValueError("Template must contain 'meta' and 'template' sections.")
+        
+        meta = structure['meta']
+        template = structure['template']
+
+        if 'version' not in meta or meta['version'] != '1.0':
+            raise ValueError("Unsupported template version. Supported version is '1.0'.")
+
+        self._create_structure_from_template(self.base_path, template)
 
     def _create_structure_from_template(self, base_path: str, structure: dict):
         for name, content in structure.items():
