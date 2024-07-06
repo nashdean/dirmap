@@ -5,6 +5,8 @@ style_outputs/
 .DS_Store
 test.py
 htmlcov
+write_template.json
+write_template.yaml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
