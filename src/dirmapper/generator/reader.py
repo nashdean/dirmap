@@ -13,11 +13,10 @@ def read_command(args):
 
         style_class = STYLE_MAP[args.style]()
         formatter_class = FORMATTER_MAP[args.format]()
-        print('after path_ignorer')
-        print(path_ignorer)
+
         # Determine the sorting strategy and case sensitivity
         sort_order, case_sensitive = parse_sort_argument(args.sort)
-        print('sort:', sort_order, case_sensitive)
+
         if sort_order == 'asc':
             sorting_strategy = AscendingSortStrategy(case_sensitive)
         elif sort_order == 'desc':
@@ -34,7 +33,6 @@ def read_command(args):
             style=style_class, 
             formatter=formatter_class
         )
-        print('instance',directory_structure_generator)
         directory_structure_generator.generate()
         logger.info(f"Directory structure saved to {args.output_file}")
     except Exception as e:

@@ -43,10 +43,11 @@ def main():
             write_command(args)
         else:
             parser.print_help()
-    
-    except Exception as e:
-        log_exception(e)
-        print(f"Error: {e}")
+            sys.exit(1)
+            
+    except Exception as exc:
+        log_exception(exc, stacktrace=True)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
