@@ -1,4 +1,5 @@
 import os
+from dirmapper.utils.logger import logger
 
 class StructureWriter:
     """
@@ -16,6 +17,19 @@ class StructureWriter:
 
         if 'version' not in meta or meta['version'] != '1.0':
             raise ValueError("Unsupported template version. Supported version is '1.0'.")
+        
+        # Log or use additional meta tags if needed
+        author = meta.get('author', 'Unknown')
+        description = meta.get('description', 'No description provided')
+        creation_date = meta.get('creation_date', 'Unknown')
+        last_modified = meta.get('last_modified', 'Unknown')
+        license = meta.get('license', 'No license specified')
+
+        logger.info(f"Creating structure by {author}")
+        logger.debug(f"Description: {description}")
+        logger.debug(f"Creation date: {creation_date}")
+        logger.info(f"Template Last modified: {last_modified}")
+        logger.debug(f"License: {license}")
 
         self._create_structure_from_template(self.base_path, template)
 

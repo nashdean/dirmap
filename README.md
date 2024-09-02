@@ -6,8 +6,10 @@
 
 - Generate a hierarchical view of a directory structure.
 - Create directory structures from templates.
-    - JSON Format
-    - YAML Format
+  - JSON Format
+  - YAML Format
+- Create directory structures from a text file with the directory map/structure. Useful when asking ChatGPT to create you a project directory.
+  - Optionally create a reusable template from the directory map/structure.
 - Support for `.mapping-ignore` file to exclude files and directories.
 - Optional integration with `.gitignore` to exclude patterns specified in `.gitignore`.
 - Case-sensitive and case-insensitive sorting options.
@@ -55,6 +57,14 @@ To create a directory structure from a template file (YAML or JSON):
 
 ```sh
 dirmap write /path/to/template_file /path/to/root_directory
+```
+
+### Writing Directory Structure from a Text File
+
+To create a directory structure from a text file with the directory map/structure:
+
+```sh
+dirmap write /path/to/directory_map.txt /path/to/root_directory
 ```
 
 ### Exclude Patterns with .mapping-ignore
@@ -170,6 +180,8 @@ project/
 ```yaml
 meta:
   version: "1.0"
+  tool: "dirmapper"
+  author: YOUR_NAME
 template:
   src:
     project_name:
@@ -192,7 +204,9 @@ dirmap write write_template.yaml directory
 ```json
 {
     "meta": {
-      "version": "1.0"
+      "version": "1.0",
+      "tool": "dirmapper",
+      "author": "YOUR_NAME"
     },
     "template": {
       "src": {

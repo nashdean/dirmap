@@ -32,14 +32,17 @@ def main():
     write_parser = subparsers.add_parser('write', help='Write directory structure from template')
     write_parser.add_argument('template_file', type=str, help="The template file to create directory structure from (in YAML or JSON format).")
     write_parser.add_argument('root_directory', type=str, help="The root directory where the structure will be created.")
+    write_parser.add_argument('--template', nargs='?', const='generated_template.json', help='Generate a template file in the current working directory (optional: specify the file name)')
 
     args = parser.parse_args()
 
     try:
-        if args.command == 'write':
-            write_command(args)
-        else:  # Default to read mode
+        if args.command == "read":
             read_command(args)
+        elif args.command == "write":
+            write_command(args)
+        else:
+            parser.print_help()
     
     except Exception as e:
         log_exception(e)
