@@ -13,6 +13,8 @@
 - Support for `.mapping-ignore` file to exclude files and directories.
 - Optional integration with `.gitignore` to exclude patterns specified in `.gitignore`.
 - Case-sensitive and case-insensitive sorting options.
+- Support for various output styles and formats.
+
 
 ## Installation
 
@@ -92,6 +94,7 @@ You can now include complex regex patterns in your `.mapping-ignore` file:
 .*cache
 regex:^.*\.log$
 ```
+This file can be overridden by specifying your own *.mapping-ignore* file (named anything you want) using the flag specified earlier `--ignore_file /path/to/.mapping-ignore`.
 
 ### Disable .gitignore Integration
 
@@ -131,6 +134,42 @@ or
 
 ```sh
 dirmap -v
+```
+
+### Specify Sorting Order
+
+To generate a directory structure with ascending order:
+
+```sh
+dirmap /path/to/root_directory /path/to/output_file --sort asc
+```
+
+To generate a directory structure with descending order:
+
+```sh
+dirmap /path/to/root_directory /path/to/output_file --sort desc
+```
+
+### Specify Output Style and Format
+
+You can specify the style and format of the output using `--style` and `--format` options. Available styles include `tree`, `indentation`, `flat_list`, `markdown`, `html`, and `json`. Available formats include `plain`, `html`, and `json`.
+
+#### Example: HTML Style with HTML Format
+
+```sh
+dirmap /path/to/root_directory /path/to/output_file --style html --format html
+```
+
+#### Running All Styles with Their Respective Formats
+
+```sh
+mkdir -p ./style_outputs
+dirmap . ./style_outputs/indentation_output.txt --sort asc --style indentation
+dirmap . ./style_outputs/flat_list_output.txt --sort asc --style flat_list
+dirmap . ./style_outputs/html_output.html --sort asc --style html --format html
+dirmap . ./style_outputs/json_output.json --sort asc --style json --format json
+dirmap . ./style_outputs/markdown_output.md --sort asc --style markdown
+dirmap . ./style_outputs/tree_output.txt --sort asc --style tree
 ```
 
 ## Example
