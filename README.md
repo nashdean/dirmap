@@ -1,13 +1,20 @@
 # Dirmapper
 
-**Dirmapper** is a CLI tool to generate a directory structure mapping. It provides a visual representation of the directory and file structure, similar to the `tree` command, with support for `.gitignore`-like patterns to exclude specific files and directories.
+**Dirmapper** is a CLI tool to generate and create directory structures. It provides a visual representation of the directory and file structure, similar to the `tree` command, with support for `.gitignore`-like patterns to exclude specific files and directories. Additionally, it allows creating directory structures from templates.
 
 ## Features
 
 - Generate a hierarchical view of a directory structure.
+- Create directory structures from templates.
+  - JSON Format
+  - YAML Format
+- Create directory structures from a text file with the directory map/structure. Useful when asking ChatGPT to create you a project directory.
+  - Optionally create a reusable template from the directory map/structure.
 - Support for `.mapping-ignore` file to exclude files and directories.
 - Optional integration with `.gitignore` to exclude patterns specified in `.gitignore`.
+- Case-sensitive and case-insensitive sorting options.
 - Support for various output styles and formats.
+
 
 ## Installation
 
@@ -43,7 +50,23 @@ pip install dirmapper
 To generate a directory structure mapping:
 
 ```sh
-dirmap /path/to/root_directory /path/to/output_file
+dirmap read /path/to/root_directory /path/to/output_file
+```
+
+### Writing Directory Structure from a Template
+
+To create a directory structure from a template file (YAML or JSON):
+
+```sh
+dirmap write /path/to/template_file /path/to/root_directory
+```
+
+### Writing Directory Structure from a Text File
+
+To create a directory structure from a text file with the directory map/structure:
+
+```sh
+dirmap write /path/to/directory_map.txt /path/to/root_directory
 ```
 
 ### Exclude Patterns with .mapping-ignore
@@ -59,12 +82,17 @@ Create a `.mapping-ignore` file in the root directory and specify the patterns y
 Then run:
 
 ```sh
-dirmap /path/to/root_directory /path/to/output_file --ignore_file /path/to/.mapping-ignore
+dirmap read /path/to/root_directory /path/to/output_file --ignore_file /path/to/.mapping-ignore
 ```
 
-**NOTE**: By default, the CLI ships with a `.mapping-ignore` file that will ignore the following:
+### Inline Ignores and Complex Regex in .mapping-ignore
+
+You can now include complex regex patterns in your `.mapping-ignore` file:
+
 ```
 .git/
+.*cache
+regex:^.*\.log$
 ```
 This file can be overridden by specifying your own *.mapping-ignore* file (named anything you want) using the flag specified earlier `--ignore_file /path/to/.mapping-ignore`.
 
@@ -73,7 +101,25 @@ This file can be overridden by specifying your own *.mapping-ignore* file (named
 By default, `dirmap` will also consider patterns in `.gitignore`. To disable this feature:
 
 ```sh
-dirmap /path/to/root_directory /path/to/output_file --ignore_file /path/to/.mapping-ignore --no_gitignore
+dirmap read /path/to/root_directory /path/to/output_file --ignore_file /path/to/.mapping-ignore --no_gitignore
+```
+
+### Case-Sensitive and Non-Case-Sensitive Sorting
+
+You can specify the order in which directories and files are listed, with options for case-sensitive and non-case-sensitive sorting:
+
+```sh
+# Ascending order (case-insensitive)
+dirmap read /path/to/root_directory /path/to/output_file --sort asc
+
+# Ascending order (case-sensitive)
+dirmap read /path/to/root_directory /path/to/output_file --sort asc:case
+
+# Descending order (case-insensitive)
+dirmap read /path/to/root_directory /path/to/output_file --sort desc
+
+# Descending order (case-sensitive)
+dirmap read /path/to/root_directory /path/to/output_file --sort desc:case
 ```
 
 ### Show Version
@@ -153,7 +199,7 @@ project/
 ### Command
 
 ```sh
-dirmap project output.txt --ignore_file project/.mapping-ignore
+dirmap read project output.txt --ignore_file project/.mapping-ignore
 ```
 
 ### Sample Output
@@ -164,6 +210,65 @@ project/
 │   ├── main.py
 │   └── utils.py
 └── README.md
+```
+
+### Writing Directory Structure from Template
+
+#### Sample Template (YAML)
+
+```yaml
+meta:
+  version: "1.0"
+  tool: "dirmapper"
+  author: YOUR_NAME
+template:
+  src:
+    project_name:
+      __init__.py: ""
+  tests:
+    __init__.py: ""
+  docs: {}
+  README.md: ""
+  setup.py: ""
+  requirements.txt: ""
+  .gitignore: ""
+```
+#### Command
+
+```sh
+dirmap write write_template.yaml directory
+```
+
+#### Sample Template (JSON)
+```json
+{
+    "meta": {
+      "version": "1.0",
+      "tool": "dirmapper",
+      "author": "YOUR_NAME"
+    },
+    "template": {
+      "src": {
+        "project_name": {
+          "__init__.py": ""
+        }
+      },
+      "tests": {
+        "__init__.py": ""
+      },
+      "docs": {},
+      "README.md": "",
+      "setup.py": "",
+      "requirements.txt": "",
+      ".gitignore": ""
+    }
+  }
+```
+
+#### Command
+
+```sh
+dirmap write write_template.json directory
 ```
 
 ## Development
