@@ -27,6 +27,20 @@ brew tap nashdean/dirmap
 brew install dirmapper
 ```
 
+If you have previously tapped and installed the dirmapper package, here’s how you can uninstall and untap it:
+
+1. Uninstall the Package:
+
+```sh
+brew uninstall dirmapper
+```
+
+2. Untap the Repository:
+
+```sh
+brew untap nashdean/dirmap
+```
+
 ### Using pipx
 
 It is recommended to use `pipx` to install `dirmapper` in an isolated environment:
@@ -43,30 +57,43 @@ You can also install `dirmapper` using pip:
 pip install dirmapper
 ```
 
-## Usage
+# Usage
 
+**Show Version**
+
+To display the version of `dirmapper`:
+
+```sh
+dirmap --version
+```
+
+or
+
+```sh
+dirmap -v
+```
+
+**Get Help**
+
+```sh
+dirmap -h
+```
+
+```sh
+dirmap read -h
+```
+
+```sh
+dirmap write -h
+```
+
+## READ COMMANDS
 ### Basic Usage
 
 To generate a directory structure mapping:
 
 ```sh
 dirmap read /path/to/root_directory /path/to/output_file
-```
-
-### Writing Directory Structure from a Template
-
-To create a directory structure from a template file (YAML or JSON):
-
-```sh
-dirmap write /path/to/template_file /path/to/root_directory
-```
-
-### Writing Directory Structure from a Text File
-
-To create a directory structure from a text file with the directory map/structure:
-
-```sh
-dirmap write /path/to/directory_map.txt /path/to/root_directory
 ```
 
 ### Exclude Patterns with .mapping-ignore
@@ -85,8 +112,6 @@ Then run:
 dirmap read /path/to/root_directory /path/to/output_file --ignore_file /path/to/.mapping-ignore
 ```
 
-### Inline Ignores and Complex Regex in .mapping-ignore
-
 You can now include complex regex patterns in your `.mapping-ignore` file:
 
 ```
@@ -95,6 +120,14 @@ You can now include complex regex patterns in your `.mapping-ignore` file:
 regex:^.*\.log$
 ```
 This file can be overridden by specifying your own *.mapping-ignore* file (named anything you want) using the flag specified earlier `--ignore_file /path/to/.mapping-ignore`.
+
+### Exclude Patterns inline command
+
+You may also exclude certain patterns of files and folders being read with an inline command by specify `--ignore ARGS` where `ARGS` is replaced with a list of string arguments that match patterns you would like to ignore.
+
+```sh
+dirmap read /path/to/root_directory /path/to/output_file --ignore .git/ .*cache
+```
 
 ### Disable .gitignore Integration
 
@@ -122,34 +155,6 @@ dirmap read /path/to/root_directory /path/to/output_file --sort desc
 dirmap read /path/to/root_directory /path/to/output_file --sort desc:case
 ```
 
-### Show Version
-
-To display the version of `dirmapper`:
-
-```sh
-dirmap --version
-```
-
-or
-
-```sh
-dirmap -v
-```
-
-### Specify Sorting Order
-
-To generate a directory structure with ascending order:
-
-```sh
-dirmap /path/to/root_directory /path/to/output_file --sort asc
-```
-
-To generate a directory structure with descending order:
-
-```sh
-dirmap /path/to/root_directory /path/to/output_file --sort desc
-```
-
 ### Specify Output Style and Format
 
 You can specify the style and format of the output using `--style` and `--format` options. Available styles include `tree`, `indentation`, `flat_list`, `markdown`, `html`, and `json`. Available formats include `plain`, `html`, and `json`.
@@ -157,89 +162,28 @@ You can specify the style and format of the output using `--style` and `--format
 #### Example: HTML Style with HTML Format
 
 ```sh
-dirmap /path/to/root_directory /path/to/output_file --style html --format html
+dirmap read /path/to/root_directory /path/to/output_file --style html --format html
 ```
 
-#### Running All Styles with Their Respective Formats
+#### Running All Styles with Their Respective Formats in current working directory
 
 ```sh
 mkdir -p ./style_outputs
-dirmap . ./style_outputs/indentation_output.txt --sort asc --style indentation
-dirmap . ./style_outputs/flat_list_output.txt --sort asc --style flat_list
-dirmap . ./style_outputs/html_output.html --sort asc --style html --format html
-dirmap . ./style_outputs/json_output.json --sort asc --style json --format json
-dirmap . ./style_outputs/markdown_output.md --sort asc --style markdown
-dirmap . ./style_outputs/tree_output.txt --sort asc --style tree
+dirmap read . ./style_outputs/indentation_output.txt --sort asc --style indentation
+dirmap read . ./style_outputs/flat_list_output.txt --sort asc --style flat_list
+dirmap read . ./style_outputs/html_output.html --sort asc --style html --format html
+dirmap read . ./style_outputs/json_output.json --sort asc --style json --format json
+dirmap read . ./style_outputs/markdown_output.md --sort asc --style markdown
+dirmap read . ./style_outputs/tree_output.txt --sort asc --style tree
 ```
+## WRITE COMMANDS
+### Writing Directory Structure from a Template
 
-## Example
+To create a directory structure from a template file (YAML or JSON):
 
-### Sample Directory Structure
-
-```
-project/
-├── .git/
-│   └── config
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── src/
-│   ├── main.py
-│   ├── utils.py
-└── README.md
-```
-
-### Sample .mapping-ignore
-
-```
-.git/
-.github/
-```
-
-### Command
-
-```sh
-dirmap read project output.txt --ignore_file project/.mapping-ignore
-```
-
-### Sample Output
-
-```
-project/
-├── src/
-│   ├── main.py
-│   └── utils.py
-└── README.md
-```
-
-### Writing Directory Structure from Template
-
-#### Sample Template (YAML)
-
-```yaml
-meta:
-  version: "1.0"
-  tool: "dirmapper"
-  author: YOUR_NAME
-template:
-  src:
-    project_name:
-      __init__.py: ""
-  tests:
-    __init__.py: ""
-  docs: {}
-  README.md: ""
-  setup.py: ""
-  requirements.txt: ""
-  .gitignore: ""
-```
-#### Command
-
-```sh
-dirmap write write_template.yaml directory
-```
-
-#### Sample Template (JSON)
+#### JSON
+**Sample Template (JSON)**
+__write_template.json__
 ```json
 {
     "meta": {
@@ -265,10 +209,117 @@ dirmap write write_template.yaml directory
   }
 ```
 
-#### Command
+Enter the following command to write a JSON template to a specific directory.
+```sh
+dirmap write write_template.json /path/to/root_directory
+```
+
+#### YAML
+**Sample Template (YAML)**
+__write_template.yaml__
+```yaml
+meta:
+  version: "1.0"
+  tool: "dirmapper"
+  author: YOUR_NAME
+template:
+  src:
+    project_name:
+      __init__.py: ""
+  tests:
+    __init__.py: ""
+  docs: {}
+  README.md: ""
+  setup.py: ""
+  requirements.txt: ""
+  .gitignore: ""
+```
+
+Enter the following command to write a YAML template to a specific directory.
+```sh
+dirmap write write_template.yaml directory
+```
+
+### Writing Directory Structure from a Text File
+
+To create a directory structure from a text file with the directory map/structure:
 
 ```sh
-dirmap write write_template.json directory
+dirmap write /path/to/directory_map.txt /path/to/root_directory
+```
+
+This will create the directories and files for a given text file that follows the same output format from the `read` command. For example, if the below example was in a text file, the above write command would take that formatted directory structure/map and turn it into an actual directory with subfolders and files.
+
+`directory_map.txt`
+```
+project/
+├── .git/
+│   └── config
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── src/
+│   ├── main.py
+│   ├── utils.py
+├── .mapping-ignore
+└── README.md
+```
+
+**Output**
+The Write command specifying the path to the example file `directory_map.txt` would create a root directory __project/__ with empty files __.mapping-ignore__ and __README.md__ and subfolders __.git/__, __.github__, and __src/__ followed by the contents of these subfolders. This generated directory structure would be generated at `/path/to/root_directory`.
+
+### Writing a Directory Structure from a Text File and outputting a template
+
+You may also decide it would be useful to create a template file while creating a directory with the specified subfolders and files. This could be useful if you had to share the workflow for creating a directory structure with a service/component that reads YAML or JSON (or if you wanted to share it with a team). You can do this with the `--template` flag.
+
+```sh
+dirmap write /path/to/directory_map.txt /path/to/root_directory --template
+```
+
+This outputs a JSON template called `generated_template.json` by default to the root directory. You may change the name of this template if you wish and are allowed to output to YAML.
+
+For example, `dirmap write /path/to/directory_map.txt /path/to/root_directory --template my_template.yaml` will create a template called `my_template.yaml` instead of the default.
+
+### 
+## Example
+
+**Sample Directory Structure**
+
+```
+project/
+├── .git/
+│   └── config
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── src/
+│   ├── main.py
+│   ├── utils.py
+├── .mapping-ignore
+└── README.md
+```
+
+**Sample .mapping-ignore**
+
+```
+.git/
+.github/
+```
+
+**Command to read the directory structure:**
+
+```sh
+dirmap read project output.txt --ignore_file project/.mapping-ignore
+```
+
+**Sample output from running above command in example:**
+
+```
+project/
+├── src/
+│   ├── main.py
+│   └── utils.py
+└── README.md
 ```
 
 ## Development
@@ -291,21 +342,16 @@ pytest
 
 ## Troubleshooting
 
-### Homebrew
-
-If you have previously tapped and installed the dirmapper package, here’s how you can uninstall and untap it:
-
-1. Uninstall the Package:
-
-```sh
-brew uninstall dirmapper
+### No .mapping-ignore file error
 ```
-
-2. Untap the Repository:
-
-```sh
-brew untap nashdean/dirmap
+Error: [Errno 2] No such file or directory: '.mapping-ignore'
 ```
+If you receive a similar error as the error above, you will need to add a `.mapping-ignore` file to your current working directory. This is an unintentional bug that will be resolved in a future release.
+
+## Known Bugs
+
+### Unknown Version via Homebrew Install
+If you run `dirmap -v` or `dirmap --version` with a homebrew install of Dirmapper, you may not see the actual version tag. You may receive `main.py Unknown version` as the version. This bug will be resolved in a future release.
 
 ## Contributing
 

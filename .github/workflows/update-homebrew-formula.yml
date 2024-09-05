@@ -1,4 +1,4 @@
-name: Update Formula
+name: Update Homebrew Formula
 
 on:
   workflow_dispatch:
@@ -12,11 +12,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - name: Checkout homebrew-dirmap repo
+      uses: actions/checkout@v3
+      with:
+        repository: nashdean/homebrew-dirmap
+        path: homebrew-dirmap
+        persist-credentials: false # Use the PAT_TOKEN instead of GITHUB_TOKEN
+        fetch-depth: 0 # Fetch all history for all branches and tags
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.9'  # Use the Python version you need
 
@@ -28,25 +33,28 @@ jobs:
     - name: Update formula
       run: |
         TAG=${{ github.event.inputs.tag }}
-        FORMULA_FILE="Formula/dirmapper.rb"
+        FORMULA_FILE="homebrew-dirmap/Formula/dirmapper.rb"
         
         # Fetch the tarball URL and SHA256 checksum
         REPO="nashdean/dirmap"
         TAR_URL="https://github.com/$REPO/archive/refs/tags/$TAG.tar.gz"
         SHA256=$(curl -L $TAR_URL | shasum -a 256 | awk '{ print $1 }')
-        
-        # Create temporary directory for homebrew-dirmap
-        mkdir homebrew-dirmap
-        cd homebrew-dirmap
-        git init
-        git remote add origin https://github.com/nashdean/homebrew-dirmap.git
-        git fetch origin
-        git checkout master
 
         # Update the formula file
-        echo -e "class Dirmapper < Formula\n  desc \"A CLI tool to generate a directory structure mapping\"\n  homepage \"https://github.com/nashdean/dirmap\"\n  url \"$TAR_URL\"\n  sha256 \"$SHA256\"\n  license \"MIT\"\n\n  depends_on \"python@3.9\"\n\n  def install\n    bin.install \"src/dirmapper/main.py\" => \"dirmap\"\n    system \"pip3\", \"install\", \"-r\", \"requirements.txt\"\n  end\n\n  test do\n    system \"#{bin}/dirmap\", \"--version\"\n  end\nend" > $FORMULA_FILE
+        echo -e "class Dirmapper < Formula\n  desc \"A CLI tool to generate a directory structure mapping\"\n  homepage \"https://github.com/nashdean/dirmap\"\n  url \"$TAR_URL\"\n  sha256 \"$SHA256\"\n  license \"MIT\"\n  version \"$TAG\"\n\n  depends_on \"python@3.9\"\n\n  def install\n    libexec.install Dir[\"src/dirmapper\"]\n    (bin/\"dirmap\").write <<~EOS\n      #!/bin/bash\n      export PYTHONPATH=#{libexec}\n      export DIRMAPPER_VERSION=#{version}\n      python3 #{libexec}/dirmapper/main.py \"\$@\"\n    EOS\n    chmod 0755, bin/\"dirmap\"\n  end\n\n  test do\n    system \"#{bin}/dirmap\", \"--version\"\n  end\nend" > $FORMULA_FILE
 
-        # Commit and push changes
-        git add $FORMULA_FILE
+    - name: Commit and push changes
+      run: |
+        cd homebrew-dirmap
+        git config user.name github-actions[bot]
+        git config user.email github-actions[bot]@users.noreply.github.com
+        git checkout master
+        git pull origin master
+        git add Formula/dirmapper.rb
         git commit -m "Update dirmapper formula to $TAG"
+        
+        # Use PAT for authentication instead of the default GITHUB_TOKEN
+        git remote set-url origin https://nashdean:${{ secrets.PAT_TOKEN }}@github.com/nashdean/homebrew-dirmap.git
         git push origin master
+      env:
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
