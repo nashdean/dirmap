@@ -49,3 +49,5 @@ jobs:
         git add Formula/dirmapper.rb
         git commit -m "Update dirmapper formula to $TAG"
         git push origin master
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
