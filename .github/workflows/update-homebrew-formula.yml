@@ -50,7 +50,7 @@ jobs:
         git commit -m "Update dirmapper formula to $TAG"
         
         # Use PAT for authentication instead of the default GITHUB_TOKEN
-        git remote set-url origin https://nashdean:${{ secrets.PAT_TOKEN }}@github.com/nashdean/homebrew-dirmap.git
+        git remote set-url origin https://nashdean:${{ secrets.GITHUB_TOKEN }}@github.com/nashdean/homebrew-dirmap.git
         git push origin master
-      env:
-        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+      # env:
+      #   PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
