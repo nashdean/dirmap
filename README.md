@@ -59,6 +59,34 @@ pip install dirmapper
 
 # Usage
 
+**Show Version**
+
+To display the version of `dirmapper`:
+
+```sh
+dirmap --version
+```
+
+or
+
+```sh
+dirmap -v
+```
+
+**Get Help**
+
+```sh
+dirmap -h
+```
+
+```sh
+dirmap read -h
+```
+
+```sh
+dirmap write -h
+```
+
 ## READ COMMANDS
 ### Basic Usage
 
@@ -93,6 +121,14 @@ regex:^.*\.log$
 ```
 This file can be overridden by specifying your own *.mapping-ignore* file (named anything you want) using the flag specified earlier `--ignore_file /path/to/.mapping-ignore`.
 
+### Exclude Patterns inline command
+
+You may also exclude certain patterns of files and folders being read with an inline command by specify `--ignore ARGS` where `ARGS` is replaced with a list of string arguments that match patterns you would like to ignore.
+
+```sh
+dirmap read /path/to/root_directory /path/to/output_file --ignore .git/ .*cache
+```
+
 ### Disable .gitignore Integration
 
 By default, `dirmap` will also consider patterns in `.gitignore`. To disable this feature:
@@ -119,20 +155,6 @@ dirmap read /path/to/root_directory /path/to/output_file --sort desc
 dirmap read /path/to/root_directory /path/to/output_file --sort desc:case
 ```
 
-### Show Version
-
-To display the version of `dirmapper`:
-
-```sh
-dirmap --version
-```
-
-or
-
-```sh
-dirmap -v
-```
-
 ### Specify Output Style and Format
 
 You can specify the style and format of the output using `--style` and `--format` options. Available styles include `tree`, `indentation`, `flat_list`, `markdown`, `html`, and `json`. Available formats include `plain`, `html`, and `json`.
@@ -143,16 +165,16 @@ You can specify the style and format of the output using `--style` and `--format
 dirmap read /path/to/root_directory /path/to/output_file --style html --format html
 ```
 
-#### Running All Styles with Their Respective Formats
+#### Running All Styles with Their Respective Formats in current working directory
 
 ```sh
 mkdir -p ./style_outputs
-dirmap . ./style_outputs/indentation_output.txt --sort asc --style indentation
-dirmap . ./style_outputs/flat_list_output.txt --sort asc --style flat_list
-dirmap . ./style_outputs/html_output.html --sort asc --style html --format html
-dirmap . ./style_outputs/json_output.json --sort asc --style json --format json
-dirmap . ./style_outputs/markdown_output.md --sort asc --style markdown
-dirmap . ./style_outputs/tree_output.txt --sort asc --style tree
+dirmap read . ./style_outputs/indentation_output.txt --sort asc --style indentation
+dirmap read . ./style_outputs/flat_list_output.txt --sort asc --style flat_list
+dirmap read . ./style_outputs/html_output.html --sort asc --style html --format html
+dirmap read . ./style_outputs/json_output.json --sort asc --style json --format json
+dirmap read . ./style_outputs/markdown_output.md --sort asc --style markdown
+dirmap read . ./style_outputs/tree_output.txt --sort asc --style tree
 ```
 ## WRITE COMMANDS
 ### Writing Directory Structure from a Template
