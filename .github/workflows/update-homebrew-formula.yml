@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Checkout homebrew-dirmap repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: nashdean/homebrew-dirmap
         path: homebrew-dirmap
@@ -21,7 +21,7 @@ jobs:
         fetch-depth: 0 # Fetch all history for all branches and tags
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.9'  # Use the Python version you need
 
@@ -41,7 +41,7 @@ jobs:
         SHA256=$(curl -L $TAR_URL | shasum -a 256 | awk '{ print $1 }')
 
         # Update the formula file
-        echo -e "class Dirmapper < Formula\n  desc \"A CLI tool to generate a directory structure mapping\"\n  homepage \"https://github.com/nashdean/dirmap\"\n  url \"$TAR_URL\"\n  sha256 \"$SHA256\"\n  license \"MIT\"\n\n  depends_on \"python@3.12\"\n\n  def install\n    bin.install \"src/dirmapper/main.py\" => \"dirmap\"\n    system \"pip3\", \"install\", \"-r\", \"requirements.txt\"\n  end\n\n  test do\n    system \"#{bin}/dirmap\", \"--version\"\n  end\nend" > $FORMULA_FILE
+        echo -e "class Dirmapper < Formula\n  desc \"A CLI tool to generate a directory structure mapping\"\n  homepage \"https://github.com/nashdean/dirmap\"\n  url \"$TAR_URL\"\n  sha256 \"$SHA256\"\n  license \"MIT\"\n\n  depends_on \"python@3.9\"\n\n  def install\n    bin.install \"src/dirmapper/main.py\" => \"dirmap\"\n    system \"pip3\", \"install\", \"-r\", \"requirements.txt\"\n  end\n\n  test do\n    system \"#{bin}/dirmap\", \"--version\"\n  end\nend" > $FORMULA_FILE
 
     - name: Commit and push changes
       run: |
