@@ -1,4 +1,4 @@
-name: Update Formula
+name: Update Homebrew Formula
 
 on:
   workflow_dispatch:
@@ -6,12 +6,6 @@ on:
       tag:
         description: 'Release tag'
         required: true
-# Set the access for individual scopes, or use permissions: write-all
-permissions:
-  pull-requests: write
-  issues: write
-  repository-projects: write
-  contents: write
 
 jobs:
   update-formula:
@@ -23,6 +17,8 @@ jobs:
       with:
         repository: nashdean/homebrew-dirmap
         path: homebrew-dirmap
+        persist-credentials: false # Use the PAT_TOKEN instead of GITHUB_TOKEN
+        fetch-depth: 0 # Fetch all history for all branches and tags
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -57,15 +53,15 @@ jobs:
         git commit -m "Update dirmapper formula to $TAG"
         
         # Use PAT for authentication instead of the default GITHUB_TOKEN
-        # git remote set-url origin https://nashdean:${{ secrets.PAT_TOKEN }}@github.com/nashdean/homebrew-dirmap.git
+        git remote set-url origin https://nashdean:${{ secrets.PAT_TOKEN }}@github.com/nashdean/homebrew-dirmap.git
         git push origin update-formula-$TAG
-      # env:
-      #   PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      env:
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v3
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_TOKEN }}
         commit-message: "Update dirmapper formula to $TAG"
         branch: update-formula-$TAG
         title: "Update dirmapper formula to $TAG"
