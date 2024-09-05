@@ -342,7 +342,16 @@ pytest
 
 ## Troubleshooting
 
-Coming soon...
+### No .mapping-ignore file error
+```
+Error: [Errno 2] No such file or directory: '.mapping-ignore'
+```
+If you receive a similar error as the error above, you will need to add a `.mapping-ignore` file to your current working directory. This is an unintentional bug that will be resolved in a future release.
+
+## Known Bugs
+
+### Unknown Version via Homebrew Install
+If you run `dirmap -v` or `dirmap --version` with a homebrew install of Dirmapper, you may not see the actual version tag. You may receive `main.py Unknown version` as the version. This bug will be resolved in a future release.
 
 ## Contributing
 

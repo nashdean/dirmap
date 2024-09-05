@@ -41,7 +41,7 @@ jobs:
         SHA256=$(curl -L $TAR_URL | shasum -a 256 | awk '{ print $1 }')
 
         # Update the formula file
-        echo -e "class Dirmapper < Formula\n  desc \"A CLI tool to generate a directory structure mapping\"\n  homepage \"https://github.com/nashdean/dirmap\"\n  url \"$TAR_URL\"\n  sha256 \"$SHA256\"\n  license \"MIT\"\n\n  depends_on \"python@3.9\"\n\n  def install\n    libexec.install Dir[\"src/dirmapper\"]\n    (bin/\"dirmap\").write <<~EOS\n      #!/bin/bash\n      export PYTHONPATH=#{libexec}\n      python3 #{libexec}/dirmapper/main.py \"\$@\"\n    EOS\n    chmod 0755, bin/\"dirmap\"\n  end\n\n  test do\n    system \"#{bin}/dirmap\", \"--version\"\n  end\nend" > $FORMULA_FILE
+        echo -e "class Dirmapper < Formula\n  desc \"A CLI tool to generate a directory structure mapping\"\n  homepage \"https://github.com/nashdean/dirmap\"\n  url \"$TAR_URL\"\n  sha256 \"$SHA256\"\n  license \"MIT\"\n  version \"$TAG\"\n\n  depends_on \"python@3.9\"\n\n  def install\n    libexec.install Dir[\"src/dirmapper\"]\n    (bin/\"dirmap\").write <<~EOS\n      #!/bin/bash\n      export PYTHONPATH=#{libexec}\n      export DIRMAPPER_VERSION=#{version}\n      python3 #{libexec}/dirmapper/main.py \"\$@\"\n    EOS\n    chmod 0755, bin/\"dirmap\"\n  end\n\n  test do\n    system \"#{bin}/dirmap\", \"--version\"\n  end\nend" > $FORMULA_FILE
 
     - name: Commit and push changes
       run: |

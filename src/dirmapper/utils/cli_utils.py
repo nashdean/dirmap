@@ -1,6 +1,7 @@
 # dirmapper/utils/cli_utils.py
 
 from importlib.metadata import version, PackageNotFoundError
+import os
 from dirmapper.ignore.ignore_list_reader import IgnoreListReader, SimpleIgnorePattern, RegexIgnorePattern
 from typing import List, Tuple
 
@@ -51,6 +52,12 @@ def parse_sort_argument(sort_arg: str) -> Tuple[str, bool]:
     return sort_order, case_sensitive
 
 def get_package_version(package_name: str) -> str:
+    
+    # Check if version is passed via environment variable (for Homebrew)
+    version = os.getenv("DIRMAPPER_VERSION")
+    if version:
+        return version
+    
     try:
         return version(package_name)
     except PackageNotFoundError:
