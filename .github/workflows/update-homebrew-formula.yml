@@ -6,6 +6,12 @@ on:
       tag:
         description: 'Release tag'
         required: true
+# Set the access for individual scopes, or use permissions: write-all
+permissions:
+  pull-requests: write
+  issues: write
+  repository-projects: write
+  push: write
 
 jobs:
   update-formula:
