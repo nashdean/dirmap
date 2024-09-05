@@ -11,6 +11,7 @@ permissions:
   pull-requests: write
   issues: write
   repository-projects: write
+  contents: write
 
 jobs:
   update-formula:
@@ -56,15 +57,15 @@ jobs:
         git commit -m "Update dirmapper formula to $TAG"
         
         # Use PAT for authentication instead of the default GITHUB_TOKEN
-        git remote set-url origin https://nashdean:${{ secrets.PAT_TOKEN }}@github.com/nashdean/homebrew-dirmap.git
+        # git remote set-url origin https://nashdean:${{ secrets.PAT_TOKEN }}@github.com/nashdean/homebrew-dirmap.git
         git push origin update-formula-$TAG
-      env:
-        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      # env:
+      #   PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v3
       with:
-        token: ${{ secrets.PAT_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: "Update dirmapper formula to $TAG"
         branch: update-formula-$TAG
         title: "Update dirmapper formula to $TAG"
