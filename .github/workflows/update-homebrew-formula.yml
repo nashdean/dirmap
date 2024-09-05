@@ -48,22 +48,13 @@ jobs:
         cd homebrew-dirmap
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
-        git checkout -b update-formula-$TAG
+        git checkout master
+        git pull origin master
         git add Formula/dirmapper.rb
         git commit -m "Update dirmapper formula to $TAG"
         
         # Use PAT for authentication instead of the default GITHUB_TOKEN
         git remote set-url origin https://nashdean:${{ secrets.PAT_TOKEN }}@github.com/nashdean/homebrew-dirmap.git
-        git push origin update-formula-$TAG
+        git push origin master
       env:
         PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v3
-      with:
-        token: ${{ secrets.PAT_TOKEN }}
-        commit-message: "Update dirmapper formula to $TAG"
-        branch: update-formula-$TAG
-        title: "Update dirmapper formula to $TAG"
-        body: "This PR updates the dirmapper formula to version $TAG."
-      working-directory: homebrew-dirmap
