@@ -66,3 +66,4 @@ jobs:
         branch: update-formula-$TAG
         title: "Update dirmapper formula to $TAG"
         body: "This PR updates the dirmapper formula to version $TAG."
+      working-directory: homebrew-dirmap
