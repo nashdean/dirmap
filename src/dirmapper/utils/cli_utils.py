@@ -54,9 +54,9 @@ def parse_sort_argument(sort_arg: str) -> Tuple[str, bool]:
 def get_package_version(package_name: str) -> str:
     
     # Check if version is passed via environment variable (for Homebrew)
-    version = os.getenv("DIRMAPPER_VERSION")
-    if version:
-        return version
+    ver = os.getenv("DIRMAPPER_VERSION")
+    if ver:
+        return ver
     
     try:
         return version(package_name)

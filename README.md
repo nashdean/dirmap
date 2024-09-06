@@ -176,6 +176,18 @@ dirmap read . ./style_outputs/json_output.json --sort asc --style json --format 
 dirmap read . ./style_outputs/markdown_output.md --sort asc --style markdown
 dirmap read . ./style_outputs/tree_output.txt --sort asc --style tree
 ```
+
+## SUMMARIZE COMMANDS
+### Summarizing Directory Structure
+
+To summarize the directory structure of a project, use the `summarize` command:
+
+```sh
+dirmap summarize /path/to/output_file.txt
+```
+
+This will output a summary of the structure and likely purpose of each file.
+
 ## WRITE COMMANDS
 ### Writing Directory Structure from a Template
 

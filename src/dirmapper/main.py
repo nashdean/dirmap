@@ -1,6 +1,7 @@
 import argparse
 import sys
 
+from dirmapper.ai.summarizer import summarize_command
 from dirmapper.generator.reader import read_command
 from dirmapper.writer.writer import write_command
 from dirmapper.utils.cli_utils import get_package_version
@@ -27,27 +28,25 @@ def main():
     read_parser.add_argument('--style', choices=STYLE_MAP.keys(), default='tree', help="Choose the style of the directory structure output.")
     read_parser.add_argument('--format', choices=FORMATTER_MAP.keys(), default='plain', help="Choose the format of the directory structure output.")
     read_parser.add_argument('--ignore', type=str, nargs='*', default=[], help="Additional ignore patterns to exclude.")
+    read_parser.set_defaults(func=read_command)
 
     # Subcommand for writing directory structure
     write_parser = subparsers.add_parser('write', help='Write directory structure from template')
     write_parser.add_argument('template_file', type=str, help="The template file to create directory structure from (in YAML or JSON format).")
     write_parser.add_argument('root_directory', type=str, help="The root directory where the structure will be created.")
     write_parser.add_argument('--template', nargs='?', const='generated_template.json', help='Generate a template file in the current working directory (optional: specify the file name)')
+    write_parser.set_defaults(func=write_command)
+
+    # Subcommand for summarizing directory structure
+    summarize_parser = subparsers.add_parser('summarize', help='Summarize directory structure')
+    summarize_parser.add_argument('input_file', type=str, help='Input file containing the directory structure')
+    summarize_parser.set_defaults(func=summarize_command)
 
     args = parser.parse_args()
-
-    try:
-        if args.command == "read":
-            read_command(args)
-        elif args.command == "write":
-            write_command(args)
-        else:
-            parser.print_help()
-            sys.exit(1)
-            
-    except Exception as exc:
-        log_exception(exc, stacktrace=True)
-        sys.exit(1)
+    if hasattr(args, 'func'):
+        args.func(args)
+    else:
+        parser.print_help()
 
 if __name__ == "__main__":
     main()
