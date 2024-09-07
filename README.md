@@ -108,7 +108,7 @@ dirmapper read [root_directory] [-t [template]] [-o output] [-fo] [-if ignore_fi
 To generate a directory structure mapping:
 
 ```sh
-dirmap read /path/to/root_directory /path/to/output
+dirmap read /path/to/root_directory
 ```
 
 ### Exclude Patterns with .mapping-ignore
@@ -124,7 +124,7 @@ Create a `.mapping-ignore` file in the root directory and specify the patterns y
 Then run:
 
 ```sh
-dirmap read /path/to/root_directory /path/to/output --ignore_file /path/to/.mapping-ignore
+dirmap read /path/to/root_directory --ignore_file /path/to/.mapping-ignore
 ```
 
 You can now include complex regex patterns in your `.mapping-ignore` file:
@@ -141,7 +141,7 @@ This file can be overridden by specifying your own *.mapping-ignore* file (named
 You may also exclude certain patterns of files and folders being read with an inline command by specify `--ignore ARGS` where `ARGS` is replaced with a list of string arguments that match patterns you would like to ignore.
 
 ```sh
-dirmap read /path/to/root_directory /path/to/output --ignore .git/ .*cache
+dirmap read /path/to/root_directory --ignore .git/ .*cache
 ```
 
 ### Disable .gitignore Integration
@@ -149,7 +149,7 @@ dirmap read /path/to/root_directory /path/to/output --ignore .git/ .*cache
 By default, `dirmap` will also consider patterns in `.gitignore`. To disable this feature:
 
 ```sh
-dirmap read /path/to/root_directory /path/to/output --ignore_file /path/to/.mapping-ignore --no_gitignore
+dirmap read /path/to/root_directory --ignore_file /path/to/.mapping-ignore --no_gitignore
 ```
 
 ### Case-Sensitive and Non-Case-Sensitive Sorting
@@ -158,16 +158,16 @@ You can specify the order in which directories and files are listed, with option
 
 ```sh
 # Ascending order (case-insensitive)
-dirmap read /path/to/root_directory /path/to/output --sort asc
+dirmap read /path/to/root_directory --sort asc
 
 # Ascending order (case-sensitive)
-dirmap read /path/to/root_directory /path/to/output --sort asc:case
+dirmap read /path/to/root_directory --sort asc:case
 
 # Descending order (case-insensitive)
-dirmap read /path/to/root_directory /path/to/output --sort desc
+dirmap read /path/to/root_directory --sort desc
 
 # Descending order (case-sensitive)
-dirmap read /path/to/root_directory /path/to/output --sort desc:case
+dirmap read /path/to/root_directory --sort desc:case
 ```
 
 ### Specify Output Style and Format
@@ -177,19 +177,19 @@ You can specify the style and format of the output using `--style` and `--format
 #### Example: HTML Style with HTML Format
 
 ```sh
-dirmap read /path/to/root_directory /path/to/output --style html --format html
+dirmap read /path/to/root_directory --style html --format html
 ```
 
 #### Running All Styles with Their Respective Formats in current working directory
 
 ```sh
 mkdir -p ./style_outputs
-dirmap read . ./style_outputs/indentation_output.txt --sort asc --style indentation
-dirmap read . ./style_outputs/flat_list_output.txt --sort asc --style flat_list
-dirmap read . ./style_outputs/html_output.html --sort asc --style html --format html
-dirmap read . ./style_outputs/json_output.json --sort asc --style json --format json
-dirmap read . ./style_outputs/markdown_output.md --sort asc --style markdown
-dirmap read . ./style_outputs/tree_output.txt --sort asc --style tree
+dirmap read . -o ./style_outputs/indentation_output.txt --sort asc --style indentation
+dirmap read . -o ./style_outputs/flat_list_output.txt --sort asc --style flat_list
+dirmap read . -o ./style_outputs/html_output.html --sort asc --style html --format html
+dirmap read . -o ./style_outputs/json_output.json --sort asc --style json --format json
+dirmap read . -o ./style_outputs/markdown_output.md --sort asc --style markdown
+dirmap read . -o ./style_outputs/tree_output.txt --sort asc --style tree
 ```
 
 ## SUMMARIZE COMMANDS
@@ -214,9 +214,9 @@ This will output a summary of the structure and likely purpose of each file.
 ```bash
 dirmapper summarize [input_file] [-f {minimalist,plain,html,json}] [-o output]
 ```
-- `input_file`: Input file containing the directory structure.
-- `-f`, `--format`: Format of the summary (default: minimalist).
-- `-o`, `--output`: Output file to save the summary.
+- `template_file`: Template file to create the directory structure.
+- `root_directory`: Root directory to create the structure in.
+- `-t`, `--template`: Generate a template file in the current working directory (optional: specify the file name).
 
 ### Writing Directory Structure from a Template
 
@@ -334,7 +334,7 @@ The Write command specifying the path to the example file `directory_map.txt` wo
 
 ### Writing a Directory Structure from a Text File and outputting a template
 
-You may also decide it would be useful to create a template file while creating a directory with the specified subfolders and files. This could be useful if you had to share the workflow for creating a directory structure with a service/component that reads YAML or JSON (or if you wanted to share it with a team). You can do this with the `--template` flag.
+You may also decide it would be useful to create a template file while creating a directory with the specified subfolders and files. This could be useful if you had to share the workflow for creating a directory structure with a service/component that reads YAML or JSON (or if you wanted to share it with a team). You can do this with the `--template` or `-t` flag.
 
 ```sh
 dirmap write /path/to/directory_map.txt /path/to/root_directory --template
@@ -348,7 +348,7 @@ For example, `dirmap write /path/to/directory_map.txt /path/to/root_directory --
 ## Example
 
 **Sample Directory Structure**
-
+Assume you have a file system with a directory setup containing the following structure:
 ```
 project/
 ├── .git/
@@ -364,20 +364,20 @@ project/
 ```
 
 **Sample .mapping-ignore**
-
+The `.mapping-ignore` file in this example contains the following content:
 ```
 .git/
 .github/
 ```
 
 **Command to read the directory structure:**
-
+Assume you want a better way to visualize this directory without having to parse a long, flat list like the `ls` command gives.
 ```sh
-dirmap read project output.txt --ignore_file project/.mapping-ignore
+dirmap read project --ignore_file project/.mapping-ignore
 ```
 
 **Sample output from running above command in example:**
-
+This will output in the terminal looking like the following:
 ```
 project/
 ├── src/
@@ -404,15 +404,13 @@ pip install -e .[dev]
 pytest
 ```
 
-## Troubleshooting
+## Troubleshooting & Known Bugs
 
 ### No .mapping-ignore file error
 ```
 Error: [Errno 2] No such file or directory: '.mapping-ignore'
 ```
 If you receive a similar error as the error above, you will need to add a `.mapping-ignore` file to your current working directory. This is an unintentional bug that will be resolved in a future release.
-
-## Known Bugs
 
 ### Unknown Version via Homebrew Install
 If you run `dirmap -v` or `dirmap --version` with a homebrew install of Dirmapper, you may not see the actual version tag. You may receive `main.py Unknown version` as the version. This bug will be resolved in a future release.

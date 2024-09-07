@@ -42,7 +42,7 @@ def read_command(args):
         if args.output:
             with open(args.output, 'w') as f:
                 f.write(directory_structure)
-        logger.info(f"Directory structure saved to {args.output}")
+            logger.info(f"Directory structure saved to {args.output}")
         if args.file_only and not args.output:
             raise ValueError("The --output argument is required when --file_only is specified.")
         

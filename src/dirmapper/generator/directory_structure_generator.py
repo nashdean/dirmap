@@ -53,7 +53,7 @@ class DirectoryStructureGenerator:
             sorted_structure = self._build_sorted_structure(self.root_dir, level=0)
 
             raw_structure = self.style.write_structure(sorted_structure)
-            formatted_structure = self.formatter.format(raw_structure)
+            formatted_structure = self.formatter.format(raw_structure) #FIXME: json formatter does not work
 
             # Log the ignored paths after generating the directory structure
             log_ignored_paths(self.ignorer)
