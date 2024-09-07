@@ -88,6 +88,21 @@ dirmap write -h
 ```
 
 ## READ COMMANDS
+```bash
+dirmapper read [root_directory] [-t [template]] [-o output] [-fo] [-if ignore_file] [-ng] [--sort {asc,asc:case,desc,desc:case}] [--style {tree,...}] [-f {plain,...}] [-i ignore [ignore ...]]
+```
+
+- `root_directory`: The root directory to map.
+- `-t`, `--template`: Generate a template file in the current working directory (optional: specify the file name).
+- `-o`, -`-output`: The output file to save the directory structure.
+- `-fo`, `--fileonly`: Output only the directory structure to the console.
+- `-if`, `--ignore_file`: The ignore file listing directories and files to ignore (default: .mapping-ignore).
+- `-ng`, `--no_gitignore`: Do not include patterns from .gitignore.
+- `--sort`: Sort files and folders in ascending (asc) or descending (desc) order. Use :case suffix for case-sensitive sorting.
+- `--style`: Choose the style of the directory structure output.
+- `-f`, `--format`: Choose the format of the directory structure output.
+- `-i`, `--ignore`: Additional ignore patterns to exclude.
+
 ### Basic Usage
 
 To generate a directory structure mapping:
@@ -178,6 +193,13 @@ dirmap read . ./style_outputs/tree_output.txt --sort asc --style tree
 ```
 
 ## SUMMARIZE COMMANDS
+```bash
+dirmapper summarize [input_file] [-f {minimalist,plain,html,json}] [-o output]
+```
+- `input_file`: Input file containing the directory structure.
+- `-f`, `--format`: Format of the summary (default: minimalist).
+- `-o`, `--output`: Output file to save the summary.
+
 ### Summarizing Directory Structure
 
 To summarize the directory structure of a project, use the `summarize` command:
@@ -189,6 +211,13 @@ dirmap summarize /path/to/output.txt
 This will output a summary of the structure and likely purpose of each file.
 
 ## WRITE COMMANDS
+```bash
+dirmapper summarize [input_file] [-f {minimalist,plain,html,json}] [-o output]
+```
+- `input_file`: Input file containing the directory structure.
+- `-f`, `--format`: Format of the summary (default: minimalist).
+- `-o`, `--output`: Output file to save the summary.
+
 ### Writing Directory Structure from a Template
 
 To create a directory structure from a template file (YAML or JSON):
