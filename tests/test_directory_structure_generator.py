@@ -26,7 +26,7 @@ def test_generate_with_sorting(setup_test_dir, tmpdir, sort_order, case_sensitiv
         case_sensitive: Boolean flag indicating whether sorting is case-sensitive.
         expected_files: The expected order of files in the generated output.
     """
-    output_file = tmpdir.join("test_output.txt").strpath
+    output = tmpdir.join("test_output.txt").strpath
     path_ignorer = PathIgnorer([
         SimpleIgnorePattern('.git*/'), 
         SimpleIgnorePattern('*.tmp')
@@ -39,16 +39,12 @@ def test_generate_with_sorting(setup_test_dir, tmpdir, sort_order, case_sensitiv
     else:
         sorting_strategy = NoSortStrategy()
 
-    generator = DirectoryStructureGenerator(setup_test_dir, output_file, path_ignorer, sorting_strategy)
-    generator.generate()
+    generator = DirectoryStructureGenerator(setup_test_dir, output, path_ignorer, sorting_strategy)
+    formatted_structure = generator.generate()
     
-    assert os.path.isfile(output_file)
-    with open(output_file) as f:
-        output = f.read()
-        for filename in expected_files:
-            assert filename in output
-        print(output)
-        assert output.index(expected_files[0]) < output.index(expected_files[1])
+    for filename in expected_files:
+        assert filename in formatted_structure
+    assert formatted_structure.index(expected_files[0]) < formatted_structure.index(expected_files[1])
        
 def test_generate_with_gitignore(setup_test_dir, tmpdir):
     """
@@ -62,42 +58,36 @@ def test_generate_with_gitignore(setup_test_dir, tmpdir):
         setup_test_dir: A pytest fixture that sets up a test directory structure.
         tmpdir: A pytest fixture that provides a temporary directory unique to the test invocation.
     """
-    output_file = tmpdir.join("test_output.txt").strpath
+    output = tmpdir.join("test_output.txt").strpath
     path_ignorer = PathIgnorer([
         SimpleIgnorePattern('.git'), 
         SimpleIgnorePattern('*.tmp')
     ])
 
     sorting_strategy = NoSortStrategy()
-    generator = DirectoryStructureGenerator(setup_test_dir, output_file, path_ignorer, sorting_strategy, case_sensitive=True)
-    generator.generate()
+    generator = DirectoryStructureGenerator(setup_test_dir, output, path_ignorer, sorting_strategy, case_sensitive=True)
+    formatted_structure = generator.generate()
     
-    assert os.path.isfile(output_file)
-    with open(output_file) as f:
-        output = f.read()
-        assert "├── .git" not in output
-        assert "├── .github" not in output
-        assert "├── sub_dir/" in output
-        assert "│   └── file1.txt" in output
-        assert "├── file2.txt" in output
-        assert "└── file1.log" in output
+    assert "├── .git" not in formatted_structure
+    assert "├── .github" not in formatted_structure
+    assert "├── sub_dir/" in formatted_structure
+    assert "│   └── file1.txt" in formatted_structure
+    assert "├── file2.txt" in formatted_structure
+    assert "└── file1.log" in formatted_structure
 
 def test_generate_without_gitignore(setup_test_dir, tmpdir):
-    output_file = tmpdir.join("test_output.txt").strpath
+    output = tmpdir.join("test_output.txt").strpath
     path_ignorer = PathIgnorer([])
 
     sorting_strategy = NoSortStrategy()
-    generator = DirectoryStructureGenerator(setup_test_dir, output_file, path_ignorer, sorting_strategy, case_sensitive=True)
-    generator.generate()
+    generator = DirectoryStructureGenerator(setup_test_dir, output, path_ignorer, sorting_strategy, case_sensitive=True)
+    formatted_structure = generator.generate()
     
-    assert os.path.isfile(output_file)
-    with open(output_file) as f:
-        output = f.read()
-        assert "├── file1.log" in output
-        assert "├── file2.txt" in output
-        assert "├── sub_dir/" in output
-        assert "│   └── file1.txt" in output
-        assert "├── .github/" in output
-        assert "│   └── workflow" in output
-        assert "├── .git/" in output
-        assert "│   └── config" in output
+    assert "├── file1.log" in formatted_structure
+    assert "├── file2.txt" in formatted_structure
+    assert "├── sub_dir/" in formatted_structure
+    assert "│   └── file1.txt" in formatted_structure
+    assert "├── .github/" in formatted_structure
+    assert "│   └── workflow" in formatted_structure
+    assert "├── .git/" in formatted_structure
+    assert "│   └── config" in formatted_structure

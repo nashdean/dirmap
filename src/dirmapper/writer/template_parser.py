@@ -40,7 +40,7 @@ class TemplateParser:
 
         if lines and lines[0].strip().endswith('/'):
             root_name = lines[0].strip().rstrip('/')
-            template[root_name] = {}
+            template[root_name] = []
             stack.append(template[root_name])
             root_adjusted = True
             lines = lines[1:]
@@ -48,21 +48,26 @@ class TemplateParser:
         for line in lines:
             if not line.strip():
                 continue
+            indent_level = (len(line) - len(line.lstrip('│ '))) // 4
             if root_adjusted:
-                indent_level = (len(line) - len(line.lstrip('│ '))) // 4 + 1  # Adjust indent level to account for root
-            else:
-                indent_level = (len(line) - len(line.lstrip('│ '))) // 4
+                indent_level += 1  # Adjust indent level to account for root
             name = line.strip('│ ').strip('├── ').strip('└── ')
             if name.endswith('/'):
                 name = name[:-1]
-                new_dir = {}
-                stack[indent_level][name] = new_dir
+                new_dir = []
+                if isinstance(stack[indent_level], dict):
+                    stack[indent_level][name] = new_dir
+                else:
+                    stack[indent_level].append({name: new_dir})
                 if len(stack) > indent_level + 1:
                     stack[indent_level + 1] = new_dir
                 else:
                     stack.append(new_dir)
             else:
-                stack[indent_level][name] = ""
+                if isinstance(stack[indent_level], dict):
+                    stack[indent_level][name] = {}
+                else:
+                    stack[indent_level].append({name: {}})
 
         # Get current OS user
         current_user = os.getlogin()
@@ -71,7 +76,7 @@ class TemplateParser:
         current_datetime = datetime.datetime.now().isoformat()
         return {
         "meta": {
-            "version": "1.0",
+            "version": "1.1",
             "tool": "dirmapper",
             "author": current_user,
             "creation_date": current_datetime,

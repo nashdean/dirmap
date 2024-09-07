@@ -23,7 +23,7 @@ def test_main_read_command(monkeypatch, setup_test_dir, setup_test_ignore_file):
         "main.py",
         "read",
         setup_test_dir,
-        "test_output_file.txt",
+        "--output", "test_output_file.txt",
         "--ignore_file", setup_test_ignore_file,
         "--no_gitignore",
         "--sort", "asc",

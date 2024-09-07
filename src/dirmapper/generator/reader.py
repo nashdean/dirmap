@@ -4,6 +4,7 @@ from dirmapper.utils.logger import logger, log_exception
 from dirmapper.config import STYLE_MAP, FORMATTER_MAP
 from dirmapper.utils.cli_utils import read_ignore_patterns, parse_sort_argument
 from dirmapper.utils.sorting_strategy import AscendingSortStrategy, DescendingSortStrategy, NoSortStrategy
+from dirmapper.writer.writer import write_template
 
 def read_command(args):
     try:
@@ -27,14 +28,27 @@ def read_command(args):
         # Instantiate DirectoryStructureGenerator
         directory_structure_generator = DirectoryStructureGenerator(
             args.root_directory, 
-            args.output_file, 
+            args.output, 
             path_ignorer, 
             sorting_strategy=sorting_strategy, 
             style=style_class, 
             formatter=formatter_class
         )
-        directory_structure_generator.generate()
-        logger.info(f"Directory structure saved to {args.output_file}")
+        directory_structure = directory_structure_generator.generate()
+
+        if args.template:
+            write_template(args.template, directory_structure)
+
+        if args.output:
+            with open(args.output, 'w') as f:
+                f.write(directory_structure)
+        logger.info(f"Directory structure saved to {args.output}")
+        if args.file_only and not args.output:
+            raise ValueError("The --output argument is required when --file_only is specified.")
+        
+        if not args.file_only:
+            print()
+            print(directory_structure)
     except Exception as e:
         log_exception(e)
         print(f"Error: {e}")

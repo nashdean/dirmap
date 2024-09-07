@@ -17,24 +17,25 @@ class DirectoryStructureGenerator:
     
     Attributes:
         root_dir (str): The root directory to map.
-        output_file (str): The output file to save the directory structure.
+        output (str): The output file to save the directory structure.
         ignorer (PathIgnorer): Object to handle path ignoring.
         sort_order (str): The order to sort the directory structure ('asc', 'desc', or None).
         style (BaseStyle): The style to use for the directory structure output.
         formatter (Formatter): The formatter to use for the directory structure output.
         sorting_strategy (SortingStrategy): The strategy to use for sorting.
     """
-    def __init__(self, root_dir: str, output_file: str, ignorer: PathIgnorer, sorting_strategy: SortingStrategy, case_sensitive: bool = True, style: BaseStyle = None, formatter: Formatter = None):
+    def __init__(self, root_dir: str, output: str, ignorer: PathIgnorer, sorting_strategy: SortingStrategy, case_sensitive: bool = True, style: BaseStyle = None, formatter: Formatter = None):
         self.root_dir = root_dir
-        self.output_file = output_file
+        self.output = output
         self.ignorer = ignorer
         self.sorting_strategy = sorting_strategy
         self.style = style if style else STYLE_MAP['tree']()
         self.formatter = formatter if formatter else FORMATTER_MAP['plain']()
 
-        self._validate_file_extension()
+        if output:
+            self._validate_file_extension()
 
-        logger.info(f"Directory structure generator initialized for root dir: {root_dir}, output file: {output_file}, style: {self.style.__class__.__name__}, formatter: {self.formatter.__class__.__name__}")
+        logger.info(f"Directory structure generator initialized for root dir: {root_dir}, output file: {output}, style: {self.style.__class__.__name__}, formatter: {self.formatter.__class__.__name__}")
 
     def generate(self) -> None:
         """
@@ -54,11 +55,10 @@ class DirectoryStructureGenerator:
             raw_structure = self.style.write_structure(sorted_structure)
             formatted_structure = self.formatter.format(raw_structure)
 
-            with open(self.output_file, 'w') as f:
-                f.write(formatted_structure)
-
             # Log the ignored paths after generating the directory structure
             log_ignored_paths(self.ignorer)
+
+            return formatted_structure
 
         except NotADirectoryError as e:
             log_exception(e)
@@ -103,8 +103,8 @@ class DirectoryStructureGenerator:
         """
         style_name = self.style.__class__.__name__.lower().replace('style', '')
         expected_extension = EXTENSIONS.get(style_name, '.txt')
-        if not self.output_file.endswith(expected_extension):
-            raise ValueError(f"Output file '{self.output_file}' does not match the expected extension for style '{self.style.__class__.__name__}': {expected_extension}")
+        if not self.output.endswith(expected_extension):
+            raise ValueError(f"Output file '{self.output}' does not match the expected extension for style '{self.style.__class__.__name__}': {expected_extension}")
 
     def verify_path(self, path: str = None) -> bool:
         """

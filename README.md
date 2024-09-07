@@ -93,7 +93,7 @@ dirmap write -h
 To generate a directory structure mapping:
 
 ```sh
-dirmap read /path/to/root_directory /path/to/output_file
+dirmap read /path/to/root_directory /path/to/output
 ```
 
 ### Exclude Patterns with .mapping-ignore
@@ -109,7 +109,7 @@ Create a `.mapping-ignore` file in the root directory and specify the patterns y
 Then run:
 
 ```sh
-dirmap read /path/to/root_directory /path/to/output_file --ignore_file /path/to/.mapping-ignore
+dirmap read /path/to/root_directory /path/to/output --ignore_file /path/to/.mapping-ignore
 ```
 
 You can now include complex regex patterns in your `.mapping-ignore` file:
@@ -126,7 +126,7 @@ This file can be overridden by specifying your own *.mapping-ignore* file (named
 You may also exclude certain patterns of files and folders being read with an inline command by specify `--ignore ARGS` where `ARGS` is replaced with a list of string arguments that match patterns you would like to ignore.
 
 ```sh
-dirmap read /path/to/root_directory /path/to/output_file --ignore .git/ .*cache
+dirmap read /path/to/root_directory /path/to/output --ignore .git/ .*cache
 ```
 
 ### Disable .gitignore Integration
@@ -134,7 +134,7 @@ dirmap read /path/to/root_directory /path/to/output_file --ignore .git/ .*cache
 By default, `dirmap` will also consider patterns in `.gitignore`. To disable this feature:
 
 ```sh
-dirmap read /path/to/root_directory /path/to/output_file --ignore_file /path/to/.mapping-ignore --no_gitignore
+dirmap read /path/to/root_directory /path/to/output --ignore_file /path/to/.mapping-ignore --no_gitignore
 ```
 
 ### Case-Sensitive and Non-Case-Sensitive Sorting
@@ -143,16 +143,16 @@ You can specify the order in which directories and files are listed, with option
 
 ```sh
 # Ascending order (case-insensitive)
-dirmap read /path/to/root_directory /path/to/output_file --sort asc
+dirmap read /path/to/root_directory /path/to/output --sort asc
 
 # Ascending order (case-sensitive)
-dirmap read /path/to/root_directory /path/to/output_file --sort asc:case
+dirmap read /path/to/root_directory /path/to/output --sort asc:case
 
 # Descending order (case-insensitive)
-dirmap read /path/to/root_directory /path/to/output_file --sort desc
+dirmap read /path/to/root_directory /path/to/output --sort desc
 
 # Descending order (case-sensitive)
-dirmap read /path/to/root_directory /path/to/output_file --sort desc:case
+dirmap read /path/to/root_directory /path/to/output --sort desc:case
 ```
 
 ### Specify Output Style and Format
@@ -162,7 +162,7 @@ You can specify the style and format of the output using `--style` and `--format
 #### Example: HTML Style with HTML Format
 
 ```sh
-dirmap read /path/to/root_directory /path/to/output_file --style html --format html
+dirmap read /path/to/root_directory /path/to/output --style html --format html
 ```
 
 #### Running All Styles with Their Respective Formats in current working directory
@@ -183,7 +183,7 @@ dirmap read . ./style_outputs/tree_output.txt --sort asc --style tree
 To summarize the directory structure of a project, use the `summarize` command:
 
 ```sh
-dirmap summarize /path/to/output_file.txt
+dirmap summarize /path/to/output.txt
 ```
 
 This will output a summary of the structure and likely purpose of each file.
@@ -198,27 +198,46 @@ To create a directory structure from a template file (YAML or JSON):
 __write_template.json__
 ```json
 {
-    "meta": {
-      "version": "1.0",
-      "tool": "dirmapper",
-      "author": "YOUR_NAME"
-    },
-    "template": {
-      "src": {
-        "project_name": {
-          "__init__.py": ""
-        }
+  "meta": {
+    "version": "1.1",
+    "tool": "dirmapper",
+    "author": "YOUR_NAME"
+  },
+  "template": {
+    "src": [
+      {
+        "project_name": [
+          {
+            "utils": [
+              {
+                "helper.py": {}
+              }
+            ]
+          },
+          {
+            "__init__.py": {}
+          },
+          {
+            "main.py": {}
+          }
+        ]
+      }
+    ],
+    "tests": [
+      {
+        "__init__.py": {}
       },
-      "tests": {
-        "__init__.py": ""
-      },
-      "docs": {},
-      "README.md": "",
-      "setup.py": "",
-      "requirements.txt": "",
-      ".gitignore": ""
-    }
+      {
+        "test1.py": {}
+      }
+    ],
+    "docs": [],
+    "README.md": {},
+    "setup.py": {},
+    "requirements.txt": {},
+    ".gitignore": {}
   }
+}
 ```
 
 Enter the following command to write a JSON template to a specific directory.
@@ -231,20 +250,24 @@ dirmap write write_template.json /path/to/root_directory
 __write_template.yaml__
 ```yaml
 meta:
-  version: "1.0"
+  version: "1.1"
   tool: "dirmapper"
   author: YOUR_NAME
 template:
   src:
-    project_name:
-      __init__.py: ""
+    - project_name:
+      - utils:
+        - helper.py: {}
+      - __init__.py: {}
+      - main.py: {}
   tests:
-    __init__.py: ""
-  docs: {}
-  README.md: ""
-  setup.py: ""
-  requirements.txt: ""
-  .gitignore: ""
+    - __init__.py: {}
+    - test1.py: {}
+  docs: []
+  README.md: {}
+  setup.py: {}
+  requirements.txt: {}
+  .gitignore: {}
 ```
 
 Enter the following command to write a YAML template to a specific directory.
